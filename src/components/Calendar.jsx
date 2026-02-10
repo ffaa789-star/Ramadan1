@@ -4,10 +4,11 @@ import {
   toArabicNumeral,
   formatHijriDayOnly,
   formatHijriMonthYear,
+  isRamadan,
 } from '../dateUtils';
 
-/* Sunday-first weekday headers (full Arabic names) */
-const WEEKDAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+/* Saturday-first weekday headers */
+const WEEKDAYS = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
 
 const HABIT_KEYS = ['prayer', 'quran', 'qiyam', 'charity', 'dhikr'];
 
@@ -21,6 +22,14 @@ function getScore(entry) {
   return HABIT_KEYS.reduce((sum, k) => sum + (entry[k] ? 1 : 0), 0);
 }
 
+/**
+ * Convert JS getDay() (0=Sunday) to Saturday-first index.
+ * Saturday=0, Sunday=1, Monday=2, ... Friday=6
+ */
+function saturdayFirstIndex(jsDay) {
+  return (jsDay + 1) % 7;
+}
+
 export default function Calendar({ entries, selectedDate, onSelectDate, calendarMonth, onChangeMonth }) {
   const year = calendarMonth.getFullYear();
   const month = calendarMonth.getMonth();
@@ -29,7 +38,7 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
 
   /* ── Grid boundaries (Gregorian month) ── */
   const firstDayOfMonth = new Date(year, month, 1);
-  const leadingDays = firstDayOfMonth.getDay(); // Sunday = 0 ✓
+  const leadingDays = saturdayFirstIndex(firstDayOfMonth.getDay());
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells = [];
@@ -73,7 +82,7 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
         </div>
       </div>
 
-      {/* Weekday Headers — Sunday first */}
+      {/* Weekday Headers — Saturday first */}
       <div className="calendar-weekdays">
         {WEEKDAYS.map((day) => (
           <div key={day} className="calendar-weekday">{day}</div>
@@ -93,6 +102,9 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
           /* Compute Hijri day label (display-only) */
           const hijriDay = formatHijriDayOnly(dateStr);
 
+          /* Check if this day is Ramadan */
+          const ramadan = isRamadan(dateStr);
+
           const entry = entries[dateStr];
           const score = getScore(entry);
           const isToday = dateStr === todayStr;
@@ -101,6 +113,7 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
           let className = 'calendar-day';
           if (isToday) className += ' today';
           if (isSelected) className += ' selected';
+          if (ramadan) className += ' ramadan';
 
           return (
             <button
@@ -114,6 +127,9 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
               <span className="calendar-day-hijri">
                 {hijriDay}
               </span>
+              {ramadan && (
+                <span className="calendar-day-ramadan-tag">رمضان</span>
+              )}
               {score > 0 && (
                 <>
                   <div className="calendar-day-dots">

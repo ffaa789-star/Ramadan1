@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { parseYMDToLocalNoon, addDaysYMD, formatHijriFromYMD, toArabicNumeral } from '../dateUtils';
 
 const INDIVIDUAL_PRAYERS = [
@@ -26,8 +26,6 @@ const PROGRESS_MESSAGES = [
   'يوم مكتمل، تقبّل الله منك ✨',
 ];
 
-// toArabicNumeral + formatHijriFromYMD → imported from dateUtils
-
 function allPrayersDone(prayers) {
   return prayers && INDIVIDUAL_PRAYERS.every((p) => prayers[p.key]);
 }
@@ -35,6 +33,9 @@ function allPrayersDone(prayers) {
 export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay }) {
   const [showReflection, setShowReflection] = useState(false);
   const [prayerExpanded, setPrayerExpanded] = useState(false);
+  const [quranExpanded, setQuranExpanded] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
+  const isFirstRender = useRef(true);
 
   const prayers = entry.prayers || {
     fajr: false,
@@ -47,6 +48,17 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   const score = HABITS.reduce((sum, h) => sum + (entry[h.key] ? 1 : 0), 0);
   const percentage = (score / 5) * 100;
   const completedPrayerCount = INDIVIDUAL_PRAYERS.filter((p) => prayers[p.key]).length;
+
+  // Show save toast on entry changes (skip first render)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setShowSaveToast(true);
+    const timer = setTimeout(() => setShowSaveToast(false), 800);
+    return () => clearTimeout(timer);
+  }, [entry]);
 
   // Toggle prayer main row: toggles all 5 prayers together
   function togglePrayerMain() {
@@ -82,17 +94,51 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     const updated = { ...entry, [key]: !entry[key] };
     if (key === 'quran' && !updated.quran) {
       updated.quranPages = null;
+      setQuranExpanded(false);
     }
     onUpdate(updated);
   }
 
+  // Quran pages: typing handler
   function handleQuranPages(value) {
-    const pages = value === '' ? null : Math.max(0, parseInt(value) || 0);
-    onUpdate({ ...entry, quranPages: pages });
+    const raw = value === '' ? null : parseInt(value) || 0;
+    const pages = raw === null ? null : Math.min(1000, Math.max(0, raw));
+    const updated = { ...entry, quranPages: pages };
+    // Auto-enable quran if pages > 0
+    if (pages !== null && pages > 0) {
+      updated.quran = true;
+    }
+    onUpdate(updated);
+  }
+
+  // Quran pages: stepper +/- handler
+  function stepQuranPages(delta) {
+    const current = entry.quranPages ?? 0;
+    const next = Math.min(1000, Math.max(0, current + delta));
+    const updated = { ...entry, quranPages: next === 0 ? null : next };
+    if (next > 0) {
+      updated.quran = true;
+    }
+    onUpdate(updated);
   }
 
   function handleNote(value) {
     onUpdate({ ...entry, note: value });
+  }
+
+  // WhatsApp share
+  function shareWhatsApp() {
+    const text = `رفيق رمضان 🌙 — سجّل عباداتك اليومية بسهولة (يُحفظ تلقائياً على جهازك): ${window.location.origin}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  // Copy link
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.origin).then(() => {
+      // brief feedback via toast
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 800);
+    });
   }
 
   // Timezone-safe Gregorian display
@@ -134,6 +180,9 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
       <div className="card">
         <div className="card-title">المتابعة اليومية</div>
 
+        {/* Auto-save notice */}
+        <div className="auto-save-notice">يتم الحفظ تلقائياً على جهازك</div>
+
         <div className="habits-list">
           {HABITS.map((habit) => (
             <div key={habit.key}>
@@ -143,6 +192,8 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 onClick={() => {
                   if (habit.key === 'prayer') {
                     setPrayerExpanded((prev) => !prev);
+                  } else if (habit.key === 'quran') {
+                    setQuranExpanded((prev) => !prev);
                   } else {
                     toggleHabit(habit.key);
                   }
@@ -157,11 +208,20 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                         {' '}({toArabicNumeral(completedPrayerCount)}/{toArabicNumeral(5)})
                       </span>
                     )}
+                    {habit.key === 'quran' && entry.quranPages != null && entry.quranPages > 0 && (
+                      <span className="prayer-count">
+                        {' '}({toArabicNumeral(entry.quranPages)} صفحة)
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="habit-row-actions">
-                  {habit.key === 'prayer' && (
-                    <span className={`prayer-chevron ${prayerExpanded ? 'expanded' : ''}`}>
+                  {(habit.key === 'prayer' || habit.key === 'quran') && (
+                    <span className={`prayer-chevron ${
+                      (habit.key === 'prayer' && prayerExpanded) || (habit.key === 'quran' && quranExpanded)
+                        ? 'expanded'
+                        : ''
+                    }`}>
                       ‹
                     </span>
                   )}
@@ -199,18 +259,37 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 </div>
               )}
 
-              {/* Quran pages input */}
-              {habit.key === 'quran' && entry.quran && (
-                <div className="quran-pages-input">
-                  <label>كم صفحة قرأت؟</label>
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="عدد الصفحات"
-                    value={entry.quranPages ?? ''}
-                    onChange={(e) => handleQuranPages(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+              {/* Quran expansion: pages input with stepper */}
+              {habit.key === 'quran' && quranExpanded && (
+                <div className="prayer-expansion">
+                  <div className="quran-pages-input">
+                    <label>كم صفحة قرأت؟</label>
+                    <div className="quran-stepper">
+                      <button
+                        className="quran-stepper-btn"
+                        onClick={(e) => { e.stopPropagation(); stepQuranPages(-1); }}
+                        disabled={(entry.quranPages ?? 0) <= 0}
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        min="0"
+                        max="1000"
+                        placeholder="٠"
+                        value={entry.quranPages ?? ''}
+                        onChange={(e) => handleQuranPages(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <button
+                        className="quran-stepper-btn"
+                        onClick={(e) => { e.stopPropagation(); stepQuranPages(+1); }}
+                        disabled={(entry.quranPages ?? 0) >= 1000}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -249,6 +328,16 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
         )}
       </div>
 
+      {/* Sharing Buttons */}
+      <div className="sharing-section">
+        <button className="btn btn-whatsapp" onClick={shareWhatsApp}>
+          مشاركة التطبيق عبر واتساب
+        </button>
+        <button className="btn btn-secondary" onClick={copyLink}>
+          نسخ رابط التطبيق
+        </button>
+      </div>
+
       {/* Actions */}
       <div className="actions-row">
         {!isToday && (
@@ -260,6 +349,11 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           مسح بيانات اليوم
         </button>
       </div>
+
+      {/* Save Toast */}
+      {showSaveToast && (
+        <div className="save-toast">✓ تم الحفظ</div>
+      )}
     </div>
   );
 }

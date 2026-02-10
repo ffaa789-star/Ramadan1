@@ -89,3 +89,30 @@ export function toArabicNumeral(num) {
     .map((ch) => digits[parseInt(ch)] ?? ch)
     .join('');
 }
+
+/* ── Hijri month detection (Umm Al-Qura) ── */
+
+/**
+ * Get the Hijri month number (1-12) for a Gregorian "YYYY-MM-DD" string.
+ * Uses Intl with 'en-SA-u-ca-islamic-umalqura' to get a numeric month.
+ * Returns null on error.
+ */
+export function getHijriMonth(ymd) {
+  try {
+    const dt = parseYMDToLocalNoon(ymd);
+    const parts = new Intl.DateTimeFormat('en-SA-u-ca-islamic-umalqura', {
+      month: 'numeric',
+    }).formatToParts(dt);
+    const monthPart = parts.find((p) => p.type === 'month');
+    return monthPart ? parseInt(monthPart.value, 10) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Check if a Gregorian "YYYY-MM-DD" falls in Hijri Ramadan (month 9).
+ */
+export function isRamadan(ymd) {
+  return getHijriMonth(ymd) === 9;
+}

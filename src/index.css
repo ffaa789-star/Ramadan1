@@ -24,6 +24,9 @@
   --color-today: #fff8e1;
   --color-selected: #e8f0e0;
   --color-danger: #c0392b;
+  --color-ramadan-bg: #f0f4ff;
+  --color-ramadan-border: #b8c9e8;
+  --color-ramadan-tag: #5b7aa8;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --radius-sm: 8px;
@@ -177,6 +180,15 @@ body {
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: 16px;
+}
+
+/* ===== Auto-save Notice ===== */
+.auto-save-notice {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-bottom: 12px;
+  font-weight: 300;
 }
 
 /* ===== Date Selector ===== */
@@ -409,10 +421,9 @@ body {
   transform: translateX(-16px);
 }
 
-/* ===== Quran Pages Input ===== */
+/* ===== Quran Pages Input + Stepper ===== */
 .quran-pages-input {
   margin-top: 8px;
-  margin-right: 44px;
   animation: slideDown 0.25s ease;
 }
 
@@ -423,27 +434,78 @@ body {
   margin-bottom: 6px;
 }
 
-.quran-pages-input input {
-  width: 100%;
+.quran-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
   max-width: 200px;
-  padding: 8px 12px;
+}
+
+.quran-stepper input {
+  width: 80px;
+  padding: 8px 8px;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-left: none;
+  border-right: none;
   font-family: var(--font-primary);
   font-size: 0.85rem;
   color: var(--color-text);
   background: var(--color-surface);
   direction: rtl;
+  text-align: center;
   outline: none;
   transition: border-color 0.2s ease;
+  -moz-appearance: textfield;
 }
 
-.quran-pages-input input:focus {
+.quran-stepper input::-webkit-inner-spin-button,
+.quran-stepper input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quran-stepper input:focus {
   border-color: var(--color-primary);
 }
 
-.quran-pages-input input::placeholder {
+.quran-stepper input::placeholder {
   color: var(--color-text-muted);
+}
+
+.quran-stepper-btn {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.quran-stepper-btn:first-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.quran-stepper-btn:last-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.quran-stepper-btn:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.quran-stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 @keyframes slideDown {
@@ -558,6 +620,22 @@ body {
   color: var(--color-text-muted);
 }
 
+/* ===== Sharing Section ===== */
+.sharing-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background: #1da851;
+}
+
 /* ===== Action Buttons ===== */
 .actions-row {
   display: flex;
@@ -596,6 +674,46 @@ body {
 .btn-danger:hover {
   opacity: 1;
   background: #fdf0ef;
+}
+
+/* ===== Save Toast ===== */
+.save-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  color: white;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  animation: toastIn 0.2s ease, toastOut 0.2s ease 0.6s forwards;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
 }
 
 /* ===== Calendar ===== */
@@ -716,6 +834,30 @@ body {
   border: 2px solid var(--color-primary);
 }
 
+/* ===== Ramadan Day Highlight ===== */
+.calendar-day.ramadan {
+  background: var(--color-ramadan-bg);
+  border: 1.5px solid var(--color-ramadan-border);
+}
+
+.calendar-day.ramadan.today {
+  background: var(--color-ramadan-bg);
+  border: 1.5px solid var(--color-ramadan-border);
+}
+
+.calendar-day.ramadan.selected {
+  background: var(--color-ramadan-bg);
+  border: 2px solid var(--color-primary);
+}
+
+.calendar-day-ramadan-tag {
+  font-size: 0.4rem;
+  font-weight: 600;
+  color: var(--color-ramadan-tag);
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
 .calendar-day-number {
   font-size: 0.8rem;
   font-weight: 600;
@@ -813,5 +955,9 @@ body {
 
   .prayer-mini-row {
     padding: 6px 10px;
+  }
+
+  .sharing-section {
+    flex-direction: column;
   }
 }
