@@ -135,54 +135,49 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   // Copy link
   function copyLink() {
     navigator.clipboard.writeText(window.location.origin).then(() => {
-      // brief feedback via toast
       setShowSaveToast(true);
       setTimeout(() => setShowSaveToast(false), 800);
     });
   }
 
-  // Timezone-safe Gregorian display
+  // Hijri date (display only — single source of truth, shown ONCE)
+  const hijriDate = formatHijriFromYMD(selectedDate);
+
+  // Gregorian date — use ar-EG to get actual Gregorian (ar-SA would show Hijri again)
   const dateNoon = parseYMDToLocalNoon(selectedDate);
-  const gregorianDate = dateNoon.toLocaleDateString('ar-SA', {
-    weekday: 'long',
+  const gregorianDate = dateNoon.toLocaleDateString('ar-EG', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-  // Hijri date (display only — never used for storage/navigation)
-  const hijriDate = formatHijriFromYMD(selectedDate);
-
   return (
     <div>
-      {/* Date Selector */}
+      {/* Date Selector — compact */}
       <div className="date-selector">
+        {/* RTL: → (right arrow, appears on right) = NEXT day (forward) */}
         <button
           className="date-arrow"
           onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}
         >
-          ←
+          →
         </button>
         <div className="date-display">
           {hijriDate && <div className="date-hijri">{hijriDate}</div>}
           <div className="date-gregorian">{gregorianDate}</div>
           {isToday && <span className="date-today-badge">اليوم</span>}
         </div>
+        {/* RTL: ← (left arrow, appears on left) = PREVIOUS day (backward) */}
         <button
           className="date-arrow"
           onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}
         >
-          →
+          ←
         </button>
       </div>
 
-      {/* Habits Card */}
-      <div className="card">
-        <div className="card-title">المتابعة اليومية</div>
-
-        {/* Auto-save notice */}
-        <div className="auto-save-notice">يتم الحفظ تلقائياً على جهازك</div>
-
+      {/* Habits Card — compact */}
+      <div className="card card-compact">
         <div className="habits-list">
           {HABITS.map((habit) => (
             <div key={habit.key}>
@@ -296,7 +291,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           ))}
         </div>
 
-        {/* Progress */}
+        {/* Progress — compact */}
         <div className="progress-section">
           <div className="progress-header">
             <span className="progress-label">الإنجاز اليومي</span>
@@ -349,6 +344,9 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           مسح بيانات اليوم
         </button>
       </div>
+
+      {/* Auto-save notice — at the very bottom */}
+      <div className="auto-save-notice">يتم الحفظ تلقائياً على جهازك</div>
 
       {/* Save Toast */}
       {showSaveToast && (

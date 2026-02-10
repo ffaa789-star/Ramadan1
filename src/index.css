@@ -60,7 +60,7 @@ body {
 /* ===== Header ===== */
 .app-header {
   text-align: center;
-  padding: 28px 0 20px;
+  padding: 20px 0 14px;
 }
 
 .app-title {
@@ -81,7 +81,7 @@ body {
 .nav-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   background: var(--color-surface);
   border-radius: var(--radius-full);
   padding: 4px;
@@ -113,8 +113,8 @@ body {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white;
   border-radius: var(--radius-lg);
-  padding: 24px 20px;
-  margin-bottom: 20px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
   text-align: center;
   box-shadow: var(--shadow-md);
   position: relative;
@@ -144,16 +144,16 @@ body {
 }
 
 .quote-icon {
-  font-size: 1.5rem;
-  margin-bottom: 12px;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
   opacity: 0.8;
 }
 
 .quote-text {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  line-height: 1.9;
-  margin-bottom: 10px;
+  line-height: 1.8;
+  margin-bottom: 6px;
   position: relative;
   z-index: 1;
 }
@@ -182,12 +182,19 @@ body {
   margin-bottom: 16px;
 }
 
+/* Compact variant — less padding for daily check-in */
+.card.card-compact {
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
 /* ===== Auto-save Notice ===== */
 .auto-save-notice {
   font-size: 0.72rem;
   color: var(--color-text-muted);
   text-align: center;
-  margin-bottom: 12px;
+  margin-top: 16px;
+  margin-bottom: 8px;
   font-weight: 300;
 }
 
@@ -196,8 +203,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .date-arrow {
@@ -255,14 +262,14 @@ body {
 .habits-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .habit-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: var(--radius-md);
   background: var(--color-bg);
   transition: all 0.25s ease;
@@ -521,8 +528,8 @@ body {
 
 /* ===== Progress Section ===== */
 .progress-section {
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--color-border);
 }
 
@@ -562,7 +569,7 @@ body {
 
 .progress-message {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 0.8rem;
   color: var(--color-text-muted);
   font-weight: 300;
@@ -570,7 +577,7 @@ body {
 
 /* ===== Reflection ===== */
 .reflection-section {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .reflection-toggle-btn {
@@ -624,7 +631,7 @@ body {
 .sharing-section {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .btn-whatsapp {
@@ -640,7 +647,7 @@ body {
 .actions-row {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .btn {
@@ -965,11 +972,15 @@ body {
   }
 
   .habit-row {
-    padding: 10px 12px;
+    padding: 8px 10px;
   }
 
   .prayer-mini-row {
     padding: 6px 10px;
+  }
+
+  .quote-card {
+    padding: 14px 12px;
   }
 
   .sharing-section {
