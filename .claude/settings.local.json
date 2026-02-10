@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create vite@latest . -- --template react)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(npm install)",
+      "Bash(npx vite build)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:/bin:/usr/bin:$PATH\")",
+      "Bash(npx vite --port 5173)",
+      "Bash(curl:*)"
+    ]
+  }
+}
