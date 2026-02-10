@@ -90,24 +90,38 @@ export function toArabicNumeral(num) {
     .join('');
 }
 
-/* ── Hijri month detection (Umm Al-Qura) ── */
+/* ── Hijri structured parts (Umm Al-Qura) ── */
 
 /**
- * Get the Hijri month number (1-12) for a Gregorian "YYYY-MM-DD" string.
- * Uses Intl with 'en-SA-u-ca-islamic-umalqura' to get a numeric month.
- * Returns null on error.
+ * Get structured Hijri parts { hDay, hMonth, hYear } for a Gregorian YMD.
+ * Uses 'en-SA-u-ca-islamic-umalqura' with formatToParts for numeric values.
  */
-export function getHijriMonth(ymd) {
+export function getHijriParts(ymd) {
   try {
     const dt = parseYMDToLocalNoon(ymd);
     const parts = new Intl.DateTimeFormat('en-SA-u-ca-islamic-umalqura', {
+      day: 'numeric',
       month: 'numeric',
+      year: 'numeric',
     }).formatToParts(dt);
+    const dayPart = parts.find((p) => p.type === 'day');
     const monthPart = parts.find((p) => p.type === 'month');
-    return monthPart ? parseInt(monthPart.value, 10) : null;
+    const yearPart = parts.find((p) => p.type === 'year');
+    return {
+      hDay: dayPart ? parseInt(dayPart.value, 10) : 1,
+      hMonth: monthPart ? parseInt(monthPart.value, 10) : 1,
+      hYear: yearPart ? parseInt(yearPart.value, 10) : 1446,
+    };
   } catch {
-    return null;
+    return { hDay: 1, hMonth: 1, hYear: 1446 };
   }
+}
+
+/**
+ * Get the Hijri month number (1-12) for a Gregorian "YYYY-MM-DD" string.
+ */
+export function getHijriMonth(ymd) {
+  return getHijriParts(ymd).hMonth;
 }
 
 /**
@@ -115,4 +129,40 @@ export function getHijriMonth(ymd) {
  */
 export function isRamadan(ymd) {
   return getHijriMonth(ymd) === 9;
+}
+
+/**
+ * Walk backward from anchorYmd until we find Hijri day == 1.
+ * Returns the Gregorian YMD of the first day of that Hijri month.
+ * Safety: max 35 steps to avoid infinite loops.
+ */
+export function findHijriMonthStart(anchorYmd) {
+  let cur = anchorYmd;
+  for (let i = 0; i < 35; i++) {
+    const { hDay } = getHijriParts(cur);
+    if (hDay === 1) return cur;
+    cur = addDaysYMD(cur, -1);
+  }
+  return cur; // fallback
+}
+
+/**
+ * Build array of Gregorian YMD strings for ONE complete Hijri month
+ * containing anchorYmd. Walks to month start, then forward until
+ * the Hijri month changes.
+ * Returns: string[] of 29 or 30 Gregorian "YYYY-MM-DD" entries.
+ */
+export function buildHijriMonthDays(anchorYmd) {
+  const startYmd = findHijriMonthStart(anchorYmd);
+  const { hMonth, hYear } = getHijriParts(startYmd);
+
+  const days = [startYmd];
+  let cur = startYmd;
+  for (let i = 0; i < 35; i++) {
+    cur = addDaysYMD(cur, 1);
+    const parts = getHijriParts(cur);
+    if (parts.hMonth !== hMonth || parts.hYear !== hYear) break;
+    days.push(cur);
+  }
+  return days;
 }

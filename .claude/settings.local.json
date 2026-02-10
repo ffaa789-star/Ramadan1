@@ -7,7 +7,11 @@
       "Bash(npx vite build)",
       "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:/bin:/usr/bin:$PATH\")",
       "Bash(npx vite --port 5173)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Saturday-first calendar, Ramadan highlight, Quran UX, sharing & auto-save\n\n- Calendar week starts Saturday with proper leading blanks\n- Ramadan days highlighted with calm blue bg and رمضان tag\n- القرآن is expandable with +/- stepper \\(0-1000\\), auto-enables on pages > 0\n- WhatsApp share button + copy link button\n- Auto-save notice + brief toast on changes\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }

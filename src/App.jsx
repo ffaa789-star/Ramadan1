@@ -71,10 +71,8 @@ export default function App() {
   const [entries, setEntries] = useState(loadEntries);
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
   const [activeTab, setActiveTab] = useState('checkin');
-  const [calendarMonth, setCalendarMonth] = useState(() => {
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1);
-  });
+  // Calendar anchor: a Gregorian YMD string used to determine which Hijri month to display
+  const [calendarAnchor, setCalendarAnchor] = useState(getTodayYMD);
 
   useEffect(() => {
     saveEntries(entries);
@@ -156,8 +154,8 @@ export default function App() {
           entries={entries}
           selectedDate={selectedDate}
           onSelectDate={handleSelectDate}
-          calendarMonth={calendarMonth}
-          onChangeMonth={setCalendarMonth}
+          calendarAnchor={calendarAnchor}
+          onChangeAnchor={setCalendarAnchor}
         />
       )}
     </>
