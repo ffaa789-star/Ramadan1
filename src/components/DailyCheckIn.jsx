@@ -155,10 +155,10 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     <div>
       {/* Date Selector — compact */}
       <div className="date-selector">
-        {/* RTL: → (right arrow, appears on right) = NEXT day (forward) */}
+        {/* RTL: first in DOM → renders on RIGHT. Right = backward (prev day), matching month view */}
         <button
           className="date-arrow"
-          onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}
+          onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}
         >
           →
         </button>
@@ -167,10 +167,10 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           <div className="date-gregorian">{gregorianDate}</div>
           {isToday && <span className="date-today-badge">اليوم</span>}
         </div>
-        {/* RTL: ← (left arrow, appears on left) = PREVIOUS day (backward) */}
+        {/* RTL: last in DOM → renders on LEFT. Left = forward (next day), matching month view */}
         <button
           className="date-arrow"
-          onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}
+          onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}
         >
           ←
         </button>
