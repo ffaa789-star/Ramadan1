@@ -9,6 +9,12 @@ const INDIVIDUAL_PRAYERS = [
   { key: 'isha', name: 'العشاء' },
 ];
 
+const ADHKAR_SUBS = [
+  { key: 'morning', name: 'أذكار الصباح' },
+  { key: 'evening', name: 'أذكار المساء' },
+  { key: 'duaa', name: 'الدعاء' },
+];
+
 const HABITS = [
   { key: 'prayer', name: 'الصلاة', icon: '🕌' },
   { key: 'quran', name: 'القرآن', icon: '📖' },
@@ -26,6 +32,8 @@ const PROGRESS_MESSAGES = [
   'يوم مكتمل، تقبّل الله منك ✨',
 ];
 
+const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
+
 function allPrayersDone(prayers) {
   return prayers && INDIVIDUAL_PRAYERS.every((p) => prayers[p.key]);
 }
@@ -34,15 +42,24 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   const [showReflection, setShowReflection] = useState(false);
   const [prayerExpanded, setPrayerExpanded] = useState(false);
   const [quranExpanded, setQuranExpanded] = useState(false);
+  const [adhkarExpanded, setAdhkarExpanded] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const isFirstRender = useRef(true);
 
   const prayers = entry.prayers || {
-    fajr: false,
-    dhuhr: false,
-    asr: false,
-    maghrib: false,
-    isha: false,
+    fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false,
+  };
+
+  const prayerDetails = entry.prayerDetails || {
+    fajr: { jamaa: false, sunnah: false },
+    dhuhr: { jamaa: false, sunnah: false },
+    asr: { jamaa: false, sunnah: false },
+    maghrib: { jamaa: false, sunnah: false },
+    isha: { jamaa: false, sunnah: false },
+  };
+
+  const adhkarDetails = entry.adhkarDetails || {
+    morning: false, evening: false, duaa: false,
   };
 
   const score = HABITS.reduce((sum, h) => sum + (entry[h.key] ? 1 : 0), 0);
@@ -65,13 +82,19 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     const allDone = allPrayersDone(prayers);
     const newVal = !allDone;
     const newPrayers = {};
+    const newDetails = { ...prayerDetails };
     INDIVIDUAL_PRAYERS.forEach((p) => {
       newPrayers[p.key] = newVal;
+      // When turning all off, clear chips
+      if (!newVal) {
+        newDetails[p.key] = { jamaa: false, sunnah: false };
+      }
     });
     onUpdate({
       ...entry,
       prayer: newVal,
       prayers: newPrayers,
+      prayerDetails: newDetails,
     });
     if (!allDone) {
       setPrayerExpanded(false);
@@ -81,20 +104,65 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   // Toggle a single prayer
   function toggleIndividualPrayer(prayerKey) {
     const newPrayers = { ...prayers, [prayerKey]: !prayers[prayerKey] };
+    const newDetails = { ...prayerDetails };
+    // If turning prayer OFF, clear its chips
+    if (!newPrayers[prayerKey]) {
+      newDetails[prayerKey] = { jamaa: false, sunnah: false };
+    }
     const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
     onUpdate({
       ...entry,
       prayer: allDone,
       prayers: newPrayers,
+      prayerDetails: newDetails,
     });
   }
 
-  // Toggle non-prayer habits
+  // Toggle a prayer chip (jamaa / sunnah)
+  function togglePrayerChip(prayerKey, chipKey) {
+    const oldChip = prayerDetails[prayerKey] || { jamaa: false, sunnah: false };
+    const newChipVal = !oldChip[chipKey];
+    const newDetails = {
+      ...prayerDetails,
+      [prayerKey]: { ...oldChip, [chipKey]: newChipVal },
+    };
+    const newPrayers = { ...prayers };
+    // If turning a chip ON, auto-enable the prayer
+    if (newChipVal && !newPrayers[prayerKey]) {
+      newPrayers[prayerKey] = true;
+    }
+    const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
+    onUpdate({
+      ...entry,
+      prayer: allDone,
+      prayers: newPrayers,
+      prayerDetails: newDetails,
+    });
+  }
+
+  // Toggle adhkar sub-item
+  function toggleAdhkarSub(subKey) {
+    const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
+    // Parent dhikr = any sub is on
+    const parentDone = ADHKAR_SUBS.some((s) => newAdhkar[s.key]);
+    onUpdate({
+      ...entry,
+      dhikr: parentDone,
+      adhkarDetails: newAdhkar,
+    });
+  }
+
+  // Toggle non-prayer, non-dhikr habits
   function toggleHabit(key) {
     const updated = { ...entry, [key]: !entry[key] };
     if (key === 'quran' && !updated.quran) {
       updated.quranPages = null;
       setQuranExpanded(false);
+    }
+    // If turning dhikr off via main toggle, clear sub-items
+    if (key === 'dhikr' && !updated.dhikr) {
+      updated.adhkarDetails = { morning: false, evening: false, duaa: false };
+      setAdhkarExpanded(false);
     }
     onUpdate(updated);
   }
@@ -104,7 +172,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     const raw = value === '' ? null : parseInt(value) || 0;
     const pages = raw === null ? null : Math.min(1000, Math.max(0, raw));
     const updated = { ...entry, quranPages: pages };
-    // Auto-enable quran if pages > 0
     if (pages !== null && pages > 0) {
       updated.quran = true;
     }
@@ -151,6 +218,27 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     day: 'numeric',
   });
 
+  // Count active adhkar subs
+  const adhkarActiveCount = ADHKAR_SUBS.filter((s) => adhkarDetails[s.key]).length;
+
+  // Determine which habits are expandable
+  function isExpandable(key) {
+    return key === 'prayer' || key === 'quran' || key === 'dhikr';
+  }
+
+  function isExpanded(key) {
+    if (key === 'prayer') return prayerExpanded;
+    if (key === 'quran') return quranExpanded;
+    if (key === 'dhikr') return adhkarExpanded;
+    return false;
+  }
+
+  function toggleExpand(key) {
+    if (key === 'prayer') setPrayerExpanded((prev) => !prev);
+    else if (key === 'quran') setQuranExpanded((prev) => !prev);
+    else if (key === 'dhikr') setAdhkarExpanded((prev) => !prev);
+  }
+
   return (
     <div>
       {/* Date Selector — compact */}
@@ -185,10 +273,10 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
               <div
                 className={`habit-row ${entry[habit.key] ? 'completed' : ''} ${habit.key === 'prayer' ? 'prayer-main' : ''}`}
                 onClick={() => {
-                  if (habit.key === 'prayer') {
-                    setPrayerExpanded((prev) => !prev);
-                  } else if (habit.key === 'quran') {
-                    setQuranExpanded((prev) => !prev);
+                  if (isExpandable(habit.key)) {
+                    toggleExpand(habit.key);
+                  } else if (habit.key === 'charity') {
+                    toggleHabit(habit.key);
                   } else {
                     toggleHabit(habit.key);
                   }
@@ -208,15 +296,28 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                         {' '}({toArabicNumeral(entry.quranPages)} صفحة)
                       </span>
                     )}
+                    {habit.key === 'dhikr' && adhkarActiveCount > 0 && (
+                      <span className="prayer-count">
+                        {' '}({toArabicNumeral(adhkarActiveCount)}/{toArabicNumeral(3)})
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="habit-row-actions">
-                  {(habit.key === 'prayer' || habit.key === 'quran') && (
-                    <span className={`prayer-chevron ${
-                      (habit.key === 'prayer' && prayerExpanded) || (habit.key === 'quran' && quranExpanded)
-                        ? 'expanded'
-                        : ''
-                    }`}>
+                  {/* Donation direct link — inside row, before toggle */}
+                  {habit.key === 'charity' && (
+                    <a
+                      className="donate-link"
+                      href={EHSAN_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      تبرع مباشر ↗
+                    </a>
+                  )}
+                  {isExpandable(habit.key) && (
+                    <span className={`prayer-chevron ${isExpanded(habit.key) ? 'expanded' : ''}`}>
                       ‹
                     </span>
                   )}
@@ -236,7 +337,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 </div>
               </div>
 
-              {/* Prayer expansion: 5 individual prayers */}
+              {/* Prayer expansion: 5 individual prayers with inline chips */}
               {habit.key === 'prayer' && prayerExpanded && (
                 <div className="prayer-expansion">
                   {INDIVIDUAL_PRAYERS.map((p) => (
@@ -246,8 +347,23 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                       onClick={() => toggleIndividualPrayer(p.key)}
                     >
                       <span className="prayer-mini-name">{p.name}</span>
-                      <div className={`prayer-mini-toggle ${prayers[p.key] ? 'on' : ''}`}>
-                        <div className="prayer-mini-toggle-knob" />
+                      <div className="prayer-mini-actions">
+                        {/* Inline chips: جماعة + سنة */}
+                        <button
+                          className={`prayer-chip ${prayerDetails[p.key]?.jamaa ? 'active' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); togglePrayerChip(p.key, 'jamaa'); }}
+                        >
+                          جماعة
+                        </button>
+                        <button
+                          className={`prayer-chip ${prayerDetails[p.key]?.sunnah ? 'active' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); togglePrayerChip(p.key, 'sunnah'); }}
+                        >
+                          سنة
+                        </button>
+                        <div className={`prayer-mini-toggle ${prayers[p.key] ? 'on' : ''}`}>
+                          <div className="prayer-mini-toggle-knob" />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -284,6 +400,24 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                         +
                       </button>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Adhkar expansion: 3 sub-items as compact chip grid */}
+              {habit.key === 'dhikr' && adhkarExpanded && (
+                <div className="prayer-expansion">
+                  <div className="adhkar-chips-grid">
+                    {ADHKAR_SUBS.map((sub) => (
+                      <button
+                        key={sub.key}
+                        className={`adhkar-chip ${adhkarDetails[sub.key] ? 'active' : ''}`}
+                        onClick={(e) => { e.stopPropagation(); toggleAdhkarSub(sub.key); }}
+                      >
+                        <span className="adhkar-chip-check">{adhkarDetails[sub.key] ? '✓' : ''}</span>
+                        {sub.name}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}

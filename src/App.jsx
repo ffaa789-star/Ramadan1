@@ -17,31 +17,49 @@ function emptyEntry() {
       maghrib: false,
       isha: false,
     },
+    prayerDetails: {
+      fajr: { jamaa: false, sunnah: false },
+      dhuhr: { jamaa: false, sunnah: false },
+      asr: { jamaa: false, sunnah: false },
+      maghrib: { jamaa: false, sunnah: false },
+      isha: { jamaa: false, sunnah: false },
+    },
     quran: false,
     quranPages: null,
     qiyam: false,
     charity: false,
     dhikr: false,
+    adhkarDetails: { morning: false, evening: false, duaa: false },
     note: '',
   };
 }
 
-/** Migrate old entries that lack the prayers sub-object */
+/** Migrate old entries that lack newer sub-objects */
 function migrateEntry(raw) {
   if (!raw) return null;
-  if (!raw.prayers) {
-    return {
-      ...raw,
-      prayers: {
-        fajr: !!raw.prayer,
-        dhuhr: !!raw.prayer,
-        asr: !!raw.prayer,
-        maghrib: !!raw.prayer,
-        isha: !!raw.prayer,
-      },
+  const migrated = { ...raw };
+  if (!migrated.prayers) {
+    migrated.prayers = {
+      fajr: !!migrated.prayer,
+      dhuhr: !!migrated.prayer,
+      asr: !!migrated.prayer,
+      maghrib: !!migrated.prayer,
+      isha: !!migrated.prayer,
     };
   }
-  return raw;
+  if (!migrated.prayerDetails) {
+    migrated.prayerDetails = {
+      fajr: { jamaa: false, sunnah: false },
+      dhuhr: { jamaa: false, sunnah: false },
+      asr: { jamaa: false, sunnah: false },
+      maghrib: { jamaa: false, sunnah: false },
+      isha: { jamaa: false, sunnah: false },
+    };
+  }
+  if (!migrated.adhkarDetails) {
+    migrated.adhkarDetails = { morning: false, evening: false, duaa: false };
+  }
+  return migrated;
 }
 
 function loadEntries() {
