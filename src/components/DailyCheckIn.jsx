@@ -1,5 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { parseYMDToLocalNoon, addDaysYMD, formatHijriFromYMD, toArabicNumeral } from '../dateUtils';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import {
+  parseYMDToLocalNoon,
+  addDaysYMD,
+  getTodayYMD,
+  formatHijriFromYMD,
+  formatHijriDayOnly,
+  toArabicNumeral,
+} from '../dateUtils';
 
 const INDIVIDUAL_PRAYERS = [
   { key: 'fajr', name: 'الفجر' },
@@ -34,11 +41,27 @@ const PROGRESS_MESSAGES = [
 
 const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
 
+/* Arabic weekday initials for streak boxes */
+const WEEKDAY_INITIALS = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
+
 function allPrayersDone(prayers) {
   return prayers && INDIVIDUAL_PRAYERS.every((p) => prayers[p.key]);
 }
 
-export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay }) {
+/* ── Compact inline checkbox component ── */
+function SubCheckbox({ checked, label, onChange }) {
+  return (
+    <button
+      className={`sub-checkbox ${checked ? 'checked' : ''}`}
+      onClick={(e) => { e.stopPropagation(); onChange(); }}
+    >
+      <span className="sub-checkbox-box">{checked ? '✓' : ''}</span>
+      <span className="sub-checkbox-label">{label}</span>
+    </button>
+  );
+}
+
+export default function DailyCheckIn({ entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay }) {
   const [showReflection, setShowReflection] = useState(false);
   const [prayerExpanded, setPrayerExpanded] = useState(false);
   const [quranExpanded, setQuranExpanded] = useState(false);
@@ -51,11 +74,11 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   };
 
   const prayerDetails = entry.prayerDetails || {
-    fajr: { jamaa: false, sunnah: false },
-    dhuhr: { jamaa: false, sunnah: false },
-    asr: { jamaa: false, sunnah: false },
-    maghrib: { jamaa: false, sunnah: false },
-    isha: { jamaa: false, sunnah: false },
+    fajr: { jamaa: false, nafila: false },
+    dhuhr: { jamaa: false, nafila: false },
+    asr: { jamaa: false, nafila: false },
+    maghrib: { jamaa: false, nafila: false },
+    isha: { jamaa: false, nafila: false },
   };
 
   const adhkarDetails = entry.adhkarDetails || {
@@ -65,6 +88,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   const score = HABITS.reduce((sum, h) => sum + (entry[h.key] ? 1 : 0), 0);
   const percentage = (score / 5) * 100;
   const completedPrayerCount = INDIVIDUAL_PRAYERS.filter((p) => prayers[p.key]).length;
+  const isSubmitted = !!entry.submitted;
 
   // Show save toast on entry changes (skip first render)
   useEffect(() => {
@@ -77,6 +101,37 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     return () => clearTimeout(timer);
   }, [entry]);
 
+  /* ── Streak widget data ── */
+  const streakData = useMemo(() => {
+    const todayYmd = getTodayYMD();
+    // Build 5 boxes: -3, -2, -1, 0(selected), +1 relative to selectedDate
+    const boxes = [];
+    for (let i = -3; i <= 1; i++) {
+      const ymd = addDaysYMD(selectedDate, i);
+      const dt = parseYMDToLocalNoon(ymd);
+      const hijriDay = formatHijriDayOnly(ymd);
+      const weekdayIdx = dt.getDay(); // 0=Sun
+      const dayEntry = entries[ymd];
+      const submitted = dayEntry?.submitted || false;
+      const isTodayBox = ymd === todayYmd;
+      const isSelected = i === 0;
+      boxes.push({ ymd, hijriDay, weekdayInitial: WEEKDAY_INITIALS[weekdayIdx], submitted, isTodayBox, isSelected });
+    }
+    // Compute streak: consecutive submitted days ending at today (or selectedDate)
+    let streak = 0;
+    let cur = selectedDate;
+    for (let i = 0; i < 365; i++) {
+      const e = entries[cur];
+      if (e?.submitted) {
+        streak++;
+        cur = addDaysYMD(cur, -1);
+      } else {
+        break;
+      }
+    }
+    return { boxes, streak };
+  }, [selectedDate, entries]);
+
   // Toggle prayer main row: toggles all 5 prayers together
   function togglePrayerMain() {
     const allDone = allPrayersDone(prayers);
@@ -85,9 +140,8 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     const newDetails = { ...prayerDetails };
     INDIVIDUAL_PRAYERS.forEach((p) => {
       newPrayers[p.key] = newVal;
-      // When turning all off, clear chips
       if (!newVal) {
-        newDetails[p.key] = { jamaa: false, sunnah: false };
+        newDetails[p.key] = { jamaa: false, nafila: false };
       }
     });
     onUpdate({
@@ -105,9 +159,8 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   function toggleIndividualPrayer(prayerKey) {
     const newPrayers = { ...prayers, [prayerKey]: !prayers[prayerKey] };
     const newDetails = { ...prayerDetails };
-    // If turning prayer OFF, clear its chips
     if (!newPrayers[prayerKey]) {
-      newDetails[prayerKey] = { jamaa: false, sunnah: false };
+      newDetails[prayerKey] = { jamaa: false, nafila: false };
     }
     const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
     onUpdate({
@@ -118,17 +171,19 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     });
   }
 
-  // Toggle a prayer chip (jamaa / sunnah)
-  function togglePrayerChip(prayerKey, chipKey) {
-    const oldChip = prayerDetails[prayerKey] || { jamaa: false, sunnah: false };
-    const newChipVal = !oldChip[chipKey];
+  // Toggle a prayer sub-checkbox (jamaa / nafila)
+  function togglePrayerSub(prayerKey, subKey) {
+    // For asr, never allow nafila
+    if (prayerKey === 'asr' && subKey === 'nafila') return;
+    const oldSub = prayerDetails[prayerKey] || { jamaa: false, nafila: false };
+    const newSubVal = !oldSub[subKey];
     const newDetails = {
       ...prayerDetails,
-      [prayerKey]: { ...oldChip, [chipKey]: newChipVal },
+      [prayerKey]: { ...oldSub, [subKey]: newSubVal },
     };
     const newPrayers = { ...prayers };
-    // If turning a chip ON, auto-enable the prayer
-    if (newChipVal && !newPrayers[prayerKey]) {
+    // If turning a sub ON, auto-enable the prayer
+    if (newSubVal && !newPrayers[prayerKey]) {
       newPrayers[prayerKey] = true;
     }
     const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
@@ -143,7 +198,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   // Toggle adhkar sub-item
   function toggleAdhkarSub(subKey) {
     const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
-    // Parent dhikr = any sub is on
     const parentDone = ADHKAR_SUBS.some((s) => newAdhkar[s.key]);
     onUpdate({
       ...entry,
@@ -159,7 +213,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
       updated.quranPages = null;
       setQuranExpanded(false);
     }
-    // If turning dhikr off via main toggle, clear sub-items
     if (key === 'dhikr' && !updated.dhikr) {
       updated.adhkarDetails = { morning: false, evening: false, duaa: false };
       setAdhkarExpanded(false);
@@ -193,6 +246,14 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     onUpdate({ ...entry, note: value });
   }
 
+  // Submit / unsubmit day
+  function submitDay() {
+    onUpdate({ ...entry, submitted: true });
+  }
+  function unsubmitDay() {
+    onUpdate({ ...entry, submitted: false });
+  }
+
   // WhatsApp share
   function shareWhatsApp() {
     const text = `رفيق رمضان 🌙 — سجّل عباداتك اليومية بسهولة (يُحفظ تلقائياً على جهازك): ${window.location.origin}`;
@@ -207,10 +268,10 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
     });
   }
 
-  // Hijri date (display only — single source of truth, shown ONCE)
+  // Hijri date
   const hijriDate = formatHijriFromYMD(selectedDate);
 
-  // Gregorian date — use ar-EG to get actual Gregorian (ar-SA would show Hijri again)
+  // Gregorian date
   const dateNoon = parseYMDToLocalNoon(selectedDate);
   const gregorianDate = dateNoon.toLocaleDateString('ar-EG', {
     year: 'numeric',
@@ -221,18 +282,16 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
   // Count active adhkar subs
   const adhkarActiveCount = ADHKAR_SUBS.filter((s) => adhkarDetails[s.key]).length;
 
-  // Determine which habits are expandable
+  // Expandable helpers
   function isExpandable(key) {
     return key === 'prayer' || key === 'quran' || key === 'dhikr';
   }
-
   function isExpanded(key) {
     if (key === 'prayer') return prayerExpanded;
     if (key === 'quran') return quranExpanded;
     if (key === 'dhikr') return adhkarExpanded;
     return false;
   }
-
   function toggleExpand(key) {
     if (key === 'prayer') setPrayerExpanded((prev) => !prev);
     else if (key === 'quran') setQuranExpanded((prev) => !prev);
@@ -241,9 +300,8 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
 
   return (
     <div>
-      {/* Date Selector — compact */}
+      {/* Date Selector */}
       <div className="date-selector">
-        {/* RTL: first in DOM → renders on RIGHT. Right = backward (prev day), matching month view */}
         <button
           className="date-arrow"
           onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}
@@ -255,7 +313,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           <div className="date-gregorian">{gregorianDate}</div>
           {isToday && <span className="date-today-badge">اليوم</span>}
         </div>
-        {/* RTL: last in DOM → renders on LEFT. Left = forward (next day), matching month view */}
         <button
           className="date-arrow"
           onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}
@@ -264,8 +321,29 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
         </button>
       </div>
 
-      {/* Habits Card — compact */}
-      <div className="card card-compact">
+      {/* ── Streak Strip ── */}
+      <div className="streak-strip">
+        <div className="streak-boxes">
+          {streakData.boxes.map((box) => (
+            <button
+              key={box.ymd}
+              className={`streak-box${box.submitted ? ' submitted' : ''}${box.isTodayBox ? ' today' : ''}${box.isSelected ? ' selected' : ''}`}
+              onClick={() => onNavigateDate(box.ymd)}
+            >
+              <span className="streak-box-day">{box.hijriDay}</span>
+              <span className="streak-box-wd">{box.weekdayInitial}</span>
+            </button>
+          ))}
+        </div>
+        {streakData.streak > 0 && (
+          <div className="streak-label">
+            سلسلة الاعتماد: {toArabicNumeral(streakData.streak)} {streakData.streak === 1 ? 'يوم' : 'أيام'}
+          </div>
+        )}
+      </div>
+
+      {/* Habits Card */}
+      <div className={`card card-compact${isSubmitted ? ' card-submitted' : ''}`}>
         <div className="habits-list">
           {HABITS.map((habit) => (
             <div key={habit.key}>
@@ -275,8 +353,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 onClick={() => {
                   if (isExpandable(habit.key)) {
                     toggleExpand(habit.key);
-                  } else if (habit.key === 'charity') {
-                    toggleHabit(habit.key);
                   } else {
                     toggleHabit(habit.key);
                   }
@@ -304,7 +380,6 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                   </span>
                 </div>
                 <div className="habit-row-actions">
-                  {/* Donation direct link — inside row, before toggle */}
                   {habit.key === 'charity' && (
                     <a
                       className="donate-link"
@@ -337,7 +412,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 </div>
               </div>
 
-              {/* Prayer expansion: 5 individual prayers with inline chips */}
+              {/* Prayer expansion: 5 individual prayers with checkbox subs */}
               {habit.key === 'prayer' && prayerExpanded && (
                 <div className="prayer-expansion">
                   {INDIVIDUAL_PRAYERS.map((p) => (
@@ -348,19 +423,19 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                     >
                       <span className="prayer-mini-name">{p.name}</span>
                       <div className="prayer-mini-actions">
-                        {/* Inline chips: جماعة + سنة */}
-                        <button
-                          className={`prayer-chip ${prayerDetails[p.key]?.jamaa ? 'active' : ''}`}
-                          onClick={(e) => { e.stopPropagation(); togglePrayerChip(p.key, 'jamaa'); }}
-                        >
-                          جماعة
-                        </button>
-                        <button
-                          className={`prayer-chip ${prayerDetails[p.key]?.sunnah ? 'active' : ''}`}
-                          onClick={(e) => { e.stopPropagation(); togglePrayerChip(p.key, 'sunnah'); }}
-                        >
-                          سنة
-                        </button>
+                        <SubCheckbox
+                          checked={!!prayerDetails[p.key]?.jamaa}
+                          label="جماعة"
+                          onChange={() => togglePrayerSub(p.key, 'jamaa')}
+                        />
+                        {/* No nafila for Asr */}
+                        {p.key !== 'asr' && (
+                          <SubCheckbox
+                            checked={!!prayerDetails[p.key]?.nafila}
+                            label="نافلة"
+                            onChange={() => togglePrayerSub(p.key, 'nafila')}
+                          />
+                        )}
                         <div className={`prayer-mini-toggle ${prayers[p.key] ? 'on' : ''}`}>
                           <div className="prayer-mini-toggle-knob" />
                         </div>
@@ -370,7 +445,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 </div>
               )}
 
-              {/* Quran expansion: pages input with stepper */}
+              {/* Quran expansion */}
               {habit.key === 'quran' && quranExpanded && (
                 <div className="prayer-expansion">
                   <div className="quran-pages-input">
@@ -404,19 +479,17 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
                 </div>
               )}
 
-              {/* Adhkar expansion: 3 sub-items as compact chip grid */}
+              {/* Adhkar expansion: checkbox sub-items */}
               {habit.key === 'dhikr' && adhkarExpanded && (
                 <div className="prayer-expansion">
                   <div className="adhkar-chips-grid">
                     {ADHKAR_SUBS.map((sub) => (
-                      <button
+                      <SubCheckbox
                         key={sub.key}
-                        className={`adhkar-chip ${adhkarDetails[sub.key] ? 'active' : ''}`}
-                        onClick={(e) => { e.stopPropagation(); toggleAdhkarSub(sub.key); }}
-                      >
-                        <span className="adhkar-chip-check">{adhkarDetails[sub.key] ? '✓' : ''}</span>
-                        {sub.name}
-                      </button>
+                        checked={adhkarDetails[sub.key]}
+                        label={sub.name}
+                        onChange={() => toggleAdhkarSub(sub.key)}
+                      />
                     ))}
                   </div>
                 </div>
@@ -425,7 +498,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           ))}
         </div>
 
-        {/* Progress — compact */}
+        {/* Progress */}
         <div className="progress-section">
           <div className="progress-header">
             <span className="progress-label">الإنجاز اليومي</span>
@@ -439,6 +512,18 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
           <div className="progress-message">{PROGRESS_MESSAGES[score]}</div>
         </div>
       </div>
+
+      {/* ── Submit / Submitted Panel ── */}
+      {isSubmitted ? (
+        <div className="submitted-panel">
+          <span className="submitted-text">تم اعتماد اليوم ✅ — الله يثبتك، كمل!</span>
+          <button className="submitted-edit-btn" onClick={unsubmitDay}>تعديل</button>
+        </div>
+      ) : (
+        <button className="btn btn-submit" onClick={submitDay}>
+          اعتماد اليوم
+        </button>
+      )}
 
       {/* Reflection */}
       <div className="reflection-section">
@@ -479,7 +564,7 @@ export default function DailyCheckIn({ entry, onUpdate, selectedDate, isToday, o
         </button>
       </div>
 
-      {/* Auto-save notice — at the very bottom */}
+      {/* Auto-save notice */}
       <div className="auto-save-notice">يتم الحفظ تلقائياً على جهازك</div>
 
       {/* Save Toast */}

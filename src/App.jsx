@@ -18,11 +18,11 @@ function emptyEntry() {
       isha: false,
     },
     prayerDetails: {
-      fajr: { jamaa: false, sunnah: false },
-      dhuhr: { jamaa: false, sunnah: false },
-      asr: { jamaa: false, sunnah: false },
-      maghrib: { jamaa: false, sunnah: false },
-      isha: { jamaa: false, sunnah: false },
+      fajr: { jamaa: false, nafila: false },
+      dhuhr: { jamaa: false, nafila: false },
+      asr: { jamaa: false, nafila: false },
+      maghrib: { jamaa: false, nafila: false },
+      isha: { jamaa: false, nafila: false },
     },
     quran: false,
     quranPages: null,
@@ -30,6 +30,7 @@ function emptyEntry() {
     charity: false,
     dhikr: false,
     adhkarDetails: { morning: false, evening: false, duaa: false },
+    submitted: false,
     note: '',
   };
 }
@@ -49,15 +50,31 @@ function migrateEntry(raw) {
   }
   if (!migrated.prayerDetails) {
     migrated.prayerDetails = {
-      fajr: { jamaa: false, sunnah: false },
-      dhuhr: { jamaa: false, sunnah: false },
-      asr: { jamaa: false, sunnah: false },
-      maghrib: { jamaa: false, sunnah: false },
-      isha: { jamaa: false, sunnah: false },
+      fajr: { jamaa: false, nafila: false },
+      dhuhr: { jamaa: false, nafila: false },
+      asr: { jamaa: false, nafila: false },
+      maghrib: { jamaa: false, nafila: false },
+      isha: { jamaa: false, nafila: false },
     };
+  } else {
+    // Rename sunnah → nafila if old format exists
+    const pd = migrated.prayerDetails;
+    const KEYS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    for (const k of KEYS) {
+      if (pd[k] && 'sunnah' in pd[k] && !('nafila' in pd[k])) {
+        pd[k] = { jamaa: pd[k].jamaa || false, nafila: pd[k].sunnah || false };
+      } else if (pd[k] && !('nafila' in pd[k])) {
+        pd[k] = { jamaa: pd[k].jamaa || false, nafila: false };
+      }
+    }
+    // Asr never has nafila
+    if (pd.asr) pd.asr.nafila = false;
   }
   if (!migrated.adhkarDetails) {
     migrated.adhkarDetails = { morning: false, evening: false, duaa: false };
+  }
+  if (migrated.submitted === undefined) {
+    migrated.submitted = false;
   }
   return migrated;
 }
@@ -161,6 +178,7 @@ export default function App() {
       {activeTab === 'checkin' ? (
         <DailyCheckIn
           entry={currentEntry}
+          entries={entries}
           onUpdate={updateEntry}
           selectedDate={selectedDate}
           isToday={isToday}

@@ -436,11 +436,14 @@ body {
   flex-shrink: 0;
 }
 
-/* ===== Prayer Chips (جماعة / سنة) ===== */
-.prayer-chip {
-  padding: 2px 8px;
+/* ===== Sub-Checkbox (inline compact checkboxes for prayer/adhkar) ===== */
+.sub-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
   font-family: var(--font-primary);
   font-size: 0.62rem;
@@ -448,65 +451,54 @@ body {
   color: var(--color-text-muted);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  line-height: 1.4;
+  line-height: 1;
 }
 
-.prayer-chip:active {
+.sub-checkbox:active {
   transform: scale(0.95);
 }
 
-.prayer-chip.active {
+.sub-checkbox-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 3px;
+  background: white;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: transparent;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sub-checkbox.checked .sub-checkbox-box {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.sub-checkbox.checked {
   background: var(--color-primary-soft);
   border-color: var(--color-primary);
   color: var(--color-primary);
   font-weight: 600;
 }
 
-/* ===== Adhkar Sub-Items Chip Grid ===== */
+.sub-checkbox-label {
+  line-height: 1.3;
+}
+
+/* ===== Adhkar Sub-Items Grid ===== */
 .adhkar-chips-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-}
-
-.adhkar-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  font-family: var(--font-primary);
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.adhkar-chip:active {
-  transform: scale(0.96);
-}
-
-.adhkar-chip.active {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.adhkar-chip-check {
-  font-size: 0.65rem;
-  width: 12px;
-  text-align: center;
-  flex-shrink: 0;
 }
 
 /* ===== Donation Direct Link ===== */
@@ -823,6 +815,148 @@ body {
   }
 }
 
+/* ===== Streak Strip ===== */
+.streak-strip {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.streak-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.streak-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-primary);
+  padding: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.streak-box:active {
+  transform: scale(0.95);
+}
+
+.streak-box.submitted {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.streak-box.today {
+  border-color: var(--color-accent);
+  border-width: 2px;
+}
+
+.streak-box.selected {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.streak-box-day {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.streak-box.submitted .streak-box-day {
+  color: var(--color-primary);
+}
+
+.streak-box-wd {
+  font-size: 0.5rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.streak-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-top: 6px;
+}
+
+/* ===== Submit Button + Submitted Panel ===== */
+.btn-submit {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.btn-submit:hover {
+  background: var(--color-primary-light);
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+.submitted-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  border: 1.5px solid var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.submitted-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: 1.5;
+}
+
+.submitted-edit-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.submitted-edit-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* Submitted card tint */
+.card.card-submitted {
+  border: 1.5px solid var(--color-primary);
+  background: linear-gradient(180deg, #f5faf0 0%, var(--color-surface) 40%);
+}
+
 /* ===== Calendar ===== */
 .calendar-header {
   display: flex;
@@ -1085,5 +1219,25 @@ body {
 
   .sharing-section {
     flex-direction: column;
+  }
+
+  .streak-box {
+    width: 36px;
+    height: 36px;
+  }
+
+  .streak-box-day {
+    font-size: 0.72rem;
+  }
+
+  .sub-checkbox {
+    padding: 2px 5px;
+    font-size: 0.58rem;
+  }
+
+  .sub-checkbox-box {
+    width: 12px;
+    height: 12px;
+    font-size: 0.5rem;
   }
 }
