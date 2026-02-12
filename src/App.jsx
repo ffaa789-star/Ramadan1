@@ -6,6 +6,7 @@ import DailyCheckIn from './components/DailyCheckIn';
 import Calendar from './components/Calendar';
 
 const STORAGE_KEY = 'ramadan-companion';
+const UI_VERSION_KEY = 'ramadan-ui-version';
 
 function emptyEntry() {
   return {
@@ -57,7 +58,6 @@ function migrateEntry(raw) {
       isha: { jamaa: false, nafila: false },
     };
   } else {
-    // Rename sunnah → nafila if old format exists
     const pd = migrated.prayerDetails;
     const KEYS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
     for (const k of KEYS) {
@@ -67,7 +67,6 @@ function migrateEntry(raw) {
         pd[k] = { jamaa: pd[k].jamaa || false, nafila: false };
       }
     }
-    // Asr never has nafila
     if (pd.asr) pd.asr.nafila = false;
   }
   if (!migrated.adhkarDetails) {
@@ -85,7 +84,6 @@ function loadEntries() {
     if (raw) {
       const parsed = JSON.parse(raw);
       const entries = parsed.entries || {};
-      // migrate all entries
       const migrated = {};
       for (const key in entries) {
         migrated[key] = migrateEntry(entries[key]);
@@ -102,16 +100,28 @@ function saveEntries(entries) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries }));
 }
 
+function loadUiVersion() {
+  try {
+    return localStorage.getItem(UI_VERSION_KEY) || 'classic';
+  } catch {
+    return 'classic';
+  }
+}
+
 export default function App() {
   const [entries, setEntries] = useState(loadEntries);
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
   const [activeTab, setActiveTab] = useState('checkin');
-  // Calendar anchor: a Gregorian YMD string used to determine which Hijri month to display
   const [calendarAnchor, setCalendarAnchor] = useState(getTodayYMD);
+  const [uiVersion, setUiVersion] = useState(loadUiVersion);
 
   useEffect(() => {
     saveEntries(entries);
   }, [entries]);
+
+  useEffect(() => {
+    localStorage.setItem(UI_VERSION_KEY, uiVersion);
+  }, [uiVersion]);
 
   const currentEntry = entries[selectedDate] || emptyEntry();
   const isToday = selectedDate === getTodayYMD();
@@ -147,12 +157,14 @@ export default function App() {
     }
   }
 
+  const isCompact = uiVersion === 'compact';
+
   return (
     <>
-      {/* Header */}
-      <header className="app-header">
+      {/* Header — slim in compact mode */}
+      <header className={`app-header ${isCompact ? 'app-header-compact' : ''}`}>
         <h1 className="app-title">رفيق رمضان</h1>
-        <p className="app-subtitle">رفيقك الروحي في شهر الخير</p>
+        {!isCompact && <p className="app-subtitle">رفيقك الروحي في شهر الخير</p>}
       </header>
 
       {/* Navigation */}
@@ -161,18 +173,18 @@ export default function App() {
           className={`nav-tab ${activeTab === 'checkin' ? 'active' : ''}`}
           onClick={() => setActiveTab('checkin')}
         >
-          بطاقة المتابعة اليومية
+          {isCompact ? 'اليومية' : 'بطاقة المتابعة اليومية'}
         </button>
         <button
           className={`nav-tab ${activeTab === 'calendar' ? 'active' : ''}`}
           onClick={() => setActiveTab('calendar')}
         >
-          عرض التقويم الشهري
+          {isCompact ? 'التقويم' : 'عرض التقويم الشهري'}
         </button>
       </nav>
 
-      {/* Daily Quote */}
-      <DailyQuote selectedDate={selectedDate} />
+      {/* Daily Quote — full in classic, collapsed in compact */}
+      {!isCompact && <DailyQuote selectedDate={selectedDate} />}
 
       {/* Content */}
       {activeTab === 'checkin' ? (
@@ -184,6 +196,8 @@ export default function App() {
           isToday={isToday}
           onNavigateDate={handleNavigateDate}
           onClearDay={clearDay}
+          uiVersion={uiVersion}
+          onToggleUi={() => setUiVersion((v) => (v === 'classic' ? 'compact' : 'classic'))}
         />
       ) : (
         <Calendar
