@@ -8,7 +8,7 @@
 }
 
 :root {
-  --color-bg: #f8f6f3;
+  --color-bg: #faf9f7;
   --color-surface: #ffffff;
   --color-primary: #2d5016;
   --color-primary-light: #4a7c28;
@@ -18,7 +18,9 @@
   --color-text: #1a1a1a;
   --color-text-secondary: #5a5a5a;
   --color-text-muted: #999999;
-  --color-border: #e8e4df;
+  --color-border: #ece9e4;
+  --color-success-bg: #f0f8ea;
+  --color-success-border: #c5deb3;
   --color-toggle-off: #e8e4df;
   --color-toggle-on: #2d5016;
   --color-today: #fff8e1;
@@ -27,11 +29,12 @@
   --color-ramadan-bg: #f0f4ff;
   --color-ramadan-border: #b8c9e8;
   --color-ramadan-tag: #5b7aa8;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
   --font-primary: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
 }
@@ -54,7 +57,7 @@ body {
 #root {
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 16px 80px;
+  padding: 0 16px 90px;
 }
 
 /* ===== Header ===== */
@@ -109,166 +112,7 @@ body {
   border-radius: var(--radius-lg);
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
-}
-
-/* ===== Donation Direct Link ===== */
-.donate-link {
-  font-family: var(--font-primary);
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: var(--color-primary);
-  text-decoration: none;
-  padding: 2px 8px;
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.donate-link:hover {
-  background: var(--color-primary-soft);
-}
-
-/* ===== Quran Pages Input + Stepper ===== */
-.quran-pages-input {
-  margin-top: 8px;
-  animation: slideDown 0.25s ease;
-}
-
-.quran-pages-input label {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 6px;
-}
-
-.quran-stepper {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  max-width: 200px;
-}
-
-.quran-stepper input {
-  width: 80px;
-  padding: 8px;
-  border: 1.5px solid var(--color-border);
-  border-left: none;
-  border-right: none;
-  font-family: var(--font-primary);
-  font-size: 0.85rem;
-  color: var(--color-text);
-  background: var(--color-surface);
-  direction: rtl;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s ease;
-  -moz-appearance: textfield;
-}
-
-.quran-stepper input::-webkit-inner-spin-button,
-.quran-stepper input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.quran-stepper input:focus {
-  border-color: var(--color-primary);
-}
-
-.quran-stepper input::placeholder {
-  color: var(--color-text-muted);
-}
-
-.quran-stepper-btn {
-  width: 36px;
-  height: 36px;
-  border: 1.5px solid var(--color-border);
-  background: var(--color-bg);
-  font-family: var(--font-primary);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.quran-stepper-btn:first-child {
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-
-.quran-stepper-btn:last-child {
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-}
-
-.quran-stepper-btn:hover:not(:disabled) {
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.quran-stepper-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== Reflection ===== */
-.reflection-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border: 1.5px dashed var(--color-border);
-  border-radius: var(--radius-md);
-  background: transparent;
-  font-family: var(--font-primary);
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.2s ease;
-}
-
-.reflection-toggle-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.reflection-textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 12px 16px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-primary);
-  font-size: 0.85rem;
-  color: var(--color-text);
-  background: var(--color-bg);
-  direction: rtl;
-  outline: none;
-  resize: vertical;
-  line-height: 1.8;
-  transition: border-color 0.2s ease;
-  animation: slideDown 0.25s ease;
-}
-
-.reflection-textarea:focus {
-  border-color: var(--color-primary);
-}
-
-.reflection-textarea::placeholder {
-  color: var(--color-text-muted);
+  box-shadow: var(--shadow-card);
 }
 
 /* ===== Buttons ===== */
@@ -302,47 +146,6 @@ body {
   background: #1da851;
 }
 
-.btn-danger {
-  background: transparent;
-  color: var(--color-danger);
-  border: 1px solid var(--color-danger);
-  opacity: 0.7;
-}
-
-.btn-danger:hover {
-  opacity: 1;
-  background: #fdf0ef;
-}
-
-/* ===== Save Toast ===== */
-.save-toast {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-primary);
-  color: white;
-  padding: 8px 20px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-primary);
-  font-size: 0.8rem;
-  font-weight: 500;
-  box-shadow: var(--shadow-md);
-  z-index: 1000;
-  animation: toastIn 0.2s ease, toastOut 0.2s ease 0.6s forwards;
-}
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-@keyframes toastOut {
-  from { opacity: 1; transform: translateX(-50%) translateY(0); }
-  to { opacity: 0; transform: translateX(-50%) translateY(10px); }
-}
-
-/* ===== Submit Button + Submitted Panel ===== */
 .btn-submit {
   display: block;
   width: 100%;
@@ -372,64 +175,75 @@ body {
   cursor: not-allowed;
 }
 
-.submitted-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  background: var(--color-primary-soft);
-  border: 1.5px solid var(--color-primary);
-  margin-bottom: 8px;
-}
-
-.submitted-text {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  line-height: 1.5;
-}
-
-.submitted-edit-btn {
-  padding: 4px 12px;
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-full);
-  background: transparent;
-  font-family: var(--font-primary);
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--color-primary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.submitted-edit-btn:hover {
+/* ===== Save Toast ===== */
+.save-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--color-primary);
   color: white;
+  padding: 8px 24px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  animation: toastIn 0.2s ease, toastOut 0.2s ease 0.6s forwards;
 }
 
-.card.card-submitted {
-  border: 1.5px solid var(--color-primary);
-  background: linear-gradient(180deg, #f5faf0 0%, var(--color-surface) 40%);
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardPop {
+  0% { transform: scale(0.97); }
+  50% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@keyframes celebrationIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 
 /* ================================================================
-   COMPACT MODE (ck-* prefix) — only mode now
+   DAILY PAGE — Ritual Experience
    ================================================================ */
 
-.ck-date-bar {
+.daily-page {
+  padding-top: 8px;
+}
+
+/* ── Minimal Header ── */
+.daily-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.daily-header-top {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 16px;
 }
 
-.ck-arrow {
-  width: 30px;
-  height: 30px;
+.daily-nav-arrow {
+  width: 36px;
+  height: 36px;
   border: none;
   background: var(--color-surface);
   border-radius: 50%;
@@ -437,245 +251,286 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1.2rem;
   color: var(--color-text-secondary);
   box-shadow: var(--shadow-sm);
   transition: all 0.15s ease;
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.ck-arrow:hover {
+.daily-nav-arrow:hover {
   background: var(--color-primary-soft);
   color: var(--color-primary);
 }
 
-.ck-date-center {
+.daily-nav-arrow:active {
+  transform: scale(0.94);
+}
+
+.daily-header-center {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   min-width: 0;
 }
 
-.ck-date-text {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.daily-weekday {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
 }
 
-.ck-today-btn {
-  padding: 2px 8px;
+.daily-hijri {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.daily-today-pill {
+  margin-top: 4px;
+  padding: 3px 14px;
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-full);
   background: var(--color-accent-light);
   font-family: var(--font-primary);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 500;
   color: var(--color-accent);
   cursor: pointer;
   white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* ── Streak dots row ── */
-.ck-streak-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.ck-streak-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.ck-dot {
-  width: 28px;
-  height: 28px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-family: var(--font-primary);
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
   transition: all 0.15s ease;
 }
 
-.ck-dot.done {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
+.daily-today-pill:active {
+  transform: scale(0.95);
 }
 
-.ck-dot.today {
-  border-color: var(--color-accent);
-  border-width: 2px;
-}
-
-.ck-dot.sel {
-  box-shadow: 0 0 0 2px var(--color-primary);
-}
-
-.ck-dot-num {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1;
-}
-
-.ck-dot.done .ck-dot-num {
-  color: var(--color-primary);
-}
-
-.ck-streak-count {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-
-/* ── Checklist card ── */
-.ck-card {
-  padding: 10px 12px !important;
-  margin-bottom: 8px !important;
-}
-
-.ck-item-wrap + .ck-item-wrap {
-  border-top: 1px solid var(--color-border);
-}
-
-/* Auto-sort transition */
-.ck-item-wrap {
-  transition: opacity 0.2s ease;
-}
-
-.ck-item-done {
-  opacity: 0.7;
-}
-
-/* ── Main checkbox row ── */
-.ck-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 4px;
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease;
-  border-radius: var(--radius-sm);
-}
-
-.ck-row:active {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-/* ── Checkbox square ── */
-.ck-check {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--color-border);
-  border-radius: 6px;
-  background: white;
+/* ── Streak ── */
+.daily-streak {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.daily-streak-fire {
+  font-size: 1.1rem;
+}
+
+.daily-streak-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.daily-streak-label {
   font-size: 0.75rem;
-  font-weight: 700;
-  color: transparent;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.ck-check.on {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-}
-
-.ck-icon {
-  font-size: 1rem;
-  width: 22px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.ck-name {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text);
-  flex: 1;
-  min-width: 0;
-}
-
-.ck-sub-count {
-  font-size: 0.7rem;
   font-weight: 400;
   color: var(--color-text-muted);
 }
 
-.ck-row-end {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  margin-right: auto;
-  margin-left: 0;
+/* ── Section Title ── */
+.daily-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 0.3px;
 }
 
-.ck-chevron {
-  font-size: 1rem;
+
+/* ================================================================
+   RITUAL CARDS — The Core Habit UI
+   ================================================================ */
+
+.ritual-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ritual-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
+}
+
+.ritual-card:active {
+  transform: scale(0.97);
+}
+
+.ritual-card-done {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  animation: cardPop 0.3s ease;
+}
+
+.ritual-card-expanded {
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Card main row ── */
+.ritual-card-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ritual-card-icon-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.ritual-card-done .ritual-card-icon-wrap {
+  background: var(--color-primary-soft);
+}
+
+.ritual-card-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ritual-card-check {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.55rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-success-bg);
+}
+
+.ritual-card-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ritual-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.ritual-card-status {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.ritual-card-sub {
+  font-size: 0.72rem;
+  font-weight: 400;
   color: var(--color-text-muted);
-  transition: transform 0.2s ease;
+}
+
+.ritual-card-sub.done {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.ritual-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ritual-card-chevron {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  transition: transform 0.25s ease;
   display: inline-block;
   transform: rotate(-90deg);
 }
 
-.ck-chevron.open {
+.ritual-card-chevron.open {
   transform: rotate(0deg);
 }
 
+/* ── Donate link ── */
+.ritual-donate-link {
+  font-family: var(--font-primary);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.ritual-donate-link:hover {
+  background: var(--color-primary-soft);
+}
+
+
 /* ── Expansion area ── */
-.ck-expand {
-  padding: 4px 0 6px 32px;
+.ritual-expand {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
   animation: slideDown 0.2s ease;
 }
 
-/* ── Prayer sub-row ── */
-.ck-prayer-row {
+/* ── Prayer sub-rows ── */
+.ritual-prayer-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: 6px;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.ck-prayer-row:active {
+.ritual-prayer-row:active {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.ck-prayer-row.done {
+.ritual-prayer-row.done {
   background: var(--color-primary-soft);
-  border-radius: 6px;
 }
 
-.ck-mini-check {
-  width: 18px;
-  height: 18px;
+.ritual-mini-check {
+  width: 20px;
+  height: 20px;
   border: 1.5px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   background: white;
   display: flex;
   align-items: center;
@@ -685,37 +540,36 @@ body {
   color: transparent;
   transition: all 0.15s ease;
   flex-shrink: 0;
-  cursor: pointer;
 }
 
-.ck-mini-check.on {
+.ritual-mini-check.on {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: white;
 }
 
-.ck-prayer-name {
-  font-size: 0.78rem;
+.ritual-prayer-name {
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--color-text);
-  min-width: 36px;
+  min-width: 40px;
 }
 
-.ck-chips {
+.ritual-chips {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   margin-right: auto;
   margin-left: 0;
 }
 
-/* ── Pill chip ── */
-.ck-chip {
-  padding: 2px 8px;
+/* ── Pill chips ── */
+.ritual-chip {
+  padding: 3px 10px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   font-family: var(--font-primary);
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -726,104 +580,290 @@ body {
   line-height: 1.4;
 }
 
-.ck-chip:active {
+.ritual-chip:active {
   transform: scale(0.95);
 }
 
-.ck-chip.active {
+.ritual-chip.active {
   background: var(--color-primary-soft);
   border-color: var(--color-primary);
   color: var(--color-primary);
   font-weight: 600;
 }
 
-.ck-chip-lg {
-  padding: 4px 10px;
-  font-size: 0.7rem;
+.ritual-chip-lg {
+  padding: 5px 14px;
+  font-size: 0.75rem;
 }
 
-.ck-chip-tick {
+.ritual-chip-tick {
   font-size: 0.6rem;
 }
 
-/* ── Adhkar sub row ── */
-.ck-adhkar-row {
+/* ── Adhkar sub-row ── */
+.ritual-adhkar-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
-/* ── Compact progress ── */
-.ck-progress {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid var(--color-border);
-}
-
-.ck-progress-track {
-  width: 100%;
-  height: 6px;
-  background: var(--color-toggle-off);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.ck-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
-  border-radius: var(--radius-full);
-  transition: width 0.4s ease;
-}
-
-.ck-progress-txt {
-  display: block;
-  text-align: center;
-  margin-top: 4px;
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-  font-weight: 300;
-}
-
-/* ── Footer row ── */
-.ck-footer {
+/* ── Quran stepper ── */
+.ritual-quran-stepper {
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
+  gap: 0;
+  max-width: 240px;
 }
 
-.ck-footer-btn {
-  padding: 6px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
+.ritual-quran-stepper input {
+  width: 70px;
+  padding: 8px;
+  border: 1.5px solid var(--color-border);
+  border-left: none;
+  border-right: none;
   font-family: var(--font-primary);
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  direction: rtl;
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.ritual-quran-stepper input::-webkit-inner-spin-button,
+.ritual-quran-stepper input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ritual-quran-stepper input:focus {
+  border-color: var(--color-primary);
+}
+
+.ritual-quran-stepper input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ritual-stepper-btn {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.ck-footer-btn:hover {
+.ritual-stepper-btn:first-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.ritual-stepper-btn:nth-of-type(2) {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.ritual-stepper-btn:hover:not(:disabled) {
   background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.ritual-stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ritual-stepper-label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-right: 10px;
+}
+
+
+/* ── Celebration ── */
+.ritual-celebration {
+  text-align: center;
+  padding: 24px 16px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #f0f8ea 0%, #fff8e1 100%);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-success-border);
+  animation: celebrationIn 0.5s ease;
+}
+
+.ritual-celebration-icon {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+}
+
+.ritual-celebration-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
+
+.ritual-celebration-sub {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+
+/* ── Submit / Submitted ── */
+.ritual-submit-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ritual-submit-btn:hover {
+  background: var(--color-primary-light);
+}
+
+.ritual-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.ritual-submitted {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-soft);
+  border: 1.5px solid var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.ritual-submitted-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ritual-submitted-edit {
+  padding: 5px 14px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ritual-submitted-edit:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+
+/* ── Reflection ── */
+.ritual-reflection-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.ritual-reflection-toggle:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
 
-.ck-footer-btn.danger {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
-  opacity: 0.7;
+.ritual-reflection-input {
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  direction: rtl;
+  outline: none;
+  resize: vertical;
+  line-height: 1.8;
+  transition: border-color 0.2s ease;
+  margin-bottom: 8px;
+  animation: slideDown 0.25s ease;
 }
 
-.ck-footer-btn.danger:hover {
+.ritual-reflection-input:focus {
+  border-color: var(--color-primary);
+}
+
+.ritual-reflection-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+
+/* ── Footer ── */
+.ritual-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  margin-bottom: 8px;
+}
+
+.ritual-clear-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-danger);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.ritual-clear-btn:hover {
   opacity: 1;
   background: #fdf0ef;
 }
 
-/* ===== Calendar ===== */
+
+/* ================================================================
+   CALENDAR
+   ================================================================ */
 .calendar-header {
   display: flex;
   align-items: center;
@@ -917,13 +957,8 @@ body {
   background: var(--color-bg);
 }
 
-.calendar-day.empty {
-  cursor: default;
-}
-
-.calendar-day.empty:hover {
-  background: transparent;
-}
+.calendar-day.empty { cursor: default; }
+.calendar-day.empty:hover { background: transparent; }
 
 .calendar-day.today {
   background: var(--color-today);
@@ -1046,6 +1081,7 @@ body {
   color: white;
 }
 
+
 /* ================================================================
    BOTTOM NAV
    ================================================================ */
@@ -1092,6 +1128,7 @@ body {
   font-size: 0.62rem;
   font-weight: 500;
 }
+
 
 /* ================================================================
    ONBOARDING
@@ -1169,11 +1206,12 @@ body {
   font-weight: 300;
 }
 
+
 /* ================================================================
-   HABIT TRACKER GRID
+   HABIT TRACKER GRID (Report Page)
    ================================================================ */
 .habit-grid-wrap {
-  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 .habit-grid-title {
@@ -1188,7 +1226,7 @@ body {
   -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .habit-grid {
@@ -1265,6 +1303,7 @@ body {
   box-shadow: inset 0 0 0 1.5px var(--color-primary);
 }
 
+
 /* ================================================================
    REPORT PAGE
    ================================================================ */
@@ -1292,7 +1331,7 @@ body {
   border-radius: var(--radius-md);
   padding: 12px 8px;
   text-align: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .report-stat-num {
@@ -1375,6 +1414,7 @@ body {
   color: var(--color-text);
 }
 
+
 /* ================================================================
    MORE PAGE
    ================================================================ */
@@ -1409,6 +1449,7 @@ body {
   width: 100%;
   margin-bottom: 8px;
 }
+
 
 /* ================================================================
    ADMIN PAGE
@@ -1543,6 +1584,7 @@ body {
   outline: none;
 }
 
+
 /* ================================================================
    NOTIFICATION BELL
    ================================================================ */
@@ -1660,6 +1702,7 @@ body {
   line-height: 1.5;
 }
 
+
 /* ===== Daily Quote ===== */
 .quote-card {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
@@ -1718,14 +1761,41 @@ body {
   z-index: 1;
 }
 
+
 /* ===== Responsive ===== */
 @media (max-width: 400px) {
   #root {
-    padding: 0 12px 80px;
+    padding: 0 12px 90px;
   }
 
   .app-title {
     font-size: 1.5rem;
+  }
+
+  .daily-hijri {
+    font-size: 0.9rem;
+  }
+
+  .ritual-card {
+    padding: 14px 14px;
+  }
+
+  .ritual-card-icon-wrap {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ritual-card-icon {
+    font-size: 1.2rem;
+  }
+
+  .ritual-card-name {
+    font-size: 0.88rem;
+  }
+
+  .ritual-chip {
+    padding: 2px 8px;
+    font-size: 0.6rem;
   }
 
   .calendar-day {
@@ -1734,28 +1804,5 @@ body {
 
   .calendar-day-hijri-num {
     font-size: 0.75rem;
-  }
-
-  .ck-date-text {
-    font-size: 0.75rem;
-  }
-
-  .ck-dot {
-    width: 24px;
-    height: 24px;
-  }
-
-  .ck-dot-num {
-    font-size: 0.58rem;
-  }
-
-  .ck-check {
-    width: 22px;
-    height: 22px;
-  }
-
-  .ck-chip {
-    padding: 2px 6px;
-    font-size: 0.55rem;
   }
 }

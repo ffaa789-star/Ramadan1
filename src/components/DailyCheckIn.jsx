@@ -1,12 +1,5 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
-import {
-  addDaysYMD,
-  getTodayYMD,
-  formatHijriFromYMD,
-  formatHijriDayOnly,
-  toArabicNumeral,
-  parseYMDToLocalNoon,
-} from '../dateUtils';
+import { useState, useEffect, useRef } from 'react';
+import { toArabicNumeral } from '../dateUtils';
 
 const INDIVIDUAL_PRAYERS = [
   { key: 'fajr', name: 'الفجر' },
@@ -23,38 +16,22 @@ const ADHKAR_SUBS = [
 ];
 
 const HABITS = [
-  { key: 'prayer', name: 'الصلاة', icon: '🕌' },
-  { key: 'quran', name: 'القرآن', icon: '📖' },
-  { key: 'fasting', name: 'الصيام', icon: '🍽️' },
-  { key: 'qiyam', name: 'قيام الليل', icon: '🌃' },
-  { key: 'charity', name: 'الصدقة', icon: '🤲' },
-  { key: 'dhikr', name: 'الأذكار', icon: '📿' },
-];
-
-const PROGRESS_MESSAGES = [
-  'ابدأ يومك بعبادة 💫',
-  'خطوة أولى مباركة',
-  'أحسنت، واصل!',
-  'ما شاء الله!',
-  'بارك الله فيك!',
-  'تبقى القليل، أكمل!',
-  'يوم مكتمل، تقبّل الله منك ✨',
+  { key: 'prayer', name: 'الصلاة', icon: '🕌', desc: 'الصلوات الخمس' },
+  { key: 'quran', name: 'القرآن', icon: '📖', desc: 'ورد القرآن' },
+  { key: 'dhikr', name: 'الأذكار', icon: '📿', desc: 'الأذكار والدعاء' },
+  { key: 'qiyam', name: 'القيام', icon: '🌃', desc: 'قيام الليل' },
+  { key: 'fasting', name: 'الصيام', icon: '🍽️', desc: 'صيام اليوم' },
+  { key: 'charity', name: 'الصدقة', icon: '🤲', desc: 'صدقة اليوم' },
 ];
 
 const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
-const WEEKDAY_INITIALS = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
 
 function allPrayersDone(prayers) {
   return prayers && INDIVIDUAL_PRAYERS.every((p) => prayers[p.key]);
 }
 
-export default function DailyCheckIn({
-  entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay,
-}) {
-  const [showReflection, setShowReflection] = useState(false);
-  const [prayerExpanded, setPrayerExpanded] = useState(false);
-  const [quranExpanded, setQuranExpanded] = useState(false);
-  const [adhkarExpanded, setAdhkarExpanded] = useState(false);
+export default function DailyCheckIn({ entry, onUpdate, onClearDay }) {
+  const [expandedCard, setExpandedCard] = useState(null);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const isFirstRender = useRef(true);
 
@@ -73,9 +50,8 @@ export default function DailyCheckIn({
   };
 
   const score = HABITS.reduce((sum, h) => sum + (entry[h.key] ? 1 : 0), 0);
-  const percentage = (score / 6) * 100;
+  const allComplete = score === 6;
   const completedPrayerCount = INDIVIDUAL_PRAYERS.filter((p) => prayers[p.key]).length;
-  const isSubmitted = !!entry.submitted;
   const adhkarActiveCount = ADHKAR_SUBS.filter((s) => adhkarDetails[s.key]).length;
 
   useEffect(() => {
@@ -85,45 +61,40 @@ export default function DailyCheckIn({
     return () => clearTimeout(timer);
   }, [entry]);
 
-  /* ── Streak data ── */
-  const streakData = useMemo(() => {
-    const todayYmd = getTodayYMD();
-    const boxes = [];
-    for (let i = -3; i <= 1; i++) {
-      const ymd = addDaysYMD(selectedDate, i);
-      const dt = parseYMDToLocalNoon(ymd);
-      const hijriDay = formatHijriDayOnly(ymd);
-      const weekdayIdx = dt.getDay();
-      const dayEntry = entries[ymd];
-      boxes.push({
-        ymd,
-        hijriDay,
-        weekdayInitial: WEEKDAY_INITIALS[weekdayIdx],
-        submitted: dayEntry?.submitted || false,
-        isTodayBox: ymd === todayYmd,
-        isSelected: i === 0,
-      });
-    }
-    let streak = 0;
-    let cur = selectedDate;
-    for (let i = 0; i < 365; i++) {
-      if (entries[cur]?.submitted) { streak++; cur = addDaysYMD(cur, -1); }
-      else break;
-    }
-    return { boxes, streak };
-  }, [selectedDate, entries]);
-
-  /* ── Sorted habits: uncompleted first, completed slide down ── */
-  const sortedHabits = useMemo(() => {
-    return [...HABITS].sort((a, b) => {
-      const aDone = !!entry[a.key];
-      const bDone = !!entry[b.key];
-      if (aDone === bDone) return 0;
-      return aDone ? 1 : -1;
-    });
-  }, [entry]);
-
   /* ── Action handlers ── */
+  function toggleCardExpand(key) {
+    setExpandedCard((prev) => (prev === key ? null : key));
+  }
+
+  function toggleHabitDone(key, e) {
+    e.stopPropagation();
+    if (key === 'prayer') {
+      togglePrayerMain();
+    } else if (key === 'dhikr') {
+      const newVal = !entry.dhikr;
+      const newAdhkar = newVal
+        ? { morning: true, evening: true, duaa: true }
+        : { morning: false, evening: false, duaa: false };
+      onUpdate({ ...entry, dhikr: newVal, adhkarDetails: newAdhkar });
+    } else if (key === 'quran') {
+      const updated = { ...entry, quran: !entry.quran };
+      if (!updated.quran) updated.quranPages = null;
+      onUpdate(updated);
+    } else {
+      onUpdate({ ...entry, [key]: !entry[key] });
+    }
+  }
+
+  function handleCardTap(key) {
+    const expandable = key === 'prayer' || key === 'quran' || key === 'dhikr';
+    if (expandable) {
+      toggleCardExpand(key);
+    } else {
+      // Simple toggle for non-expandable
+      onUpdate({ ...entry, [key]: !entry[key] });
+    }
+  }
+
   function togglePrayerMain() {
     const allDone = allPrayersDone(prayers);
     const newVal = !allDone;
@@ -134,7 +105,6 @@ export default function DailyCheckIn({
       if (!newVal) newDetails[p.key] = { jamaa: false, nafila: false };
     });
     onUpdate({ ...entry, prayer: newVal, prayers: newPrayers, prayerDetails: newDetails });
-    if (!allDone) setPrayerExpanded(false);
   }
 
   function toggleIndividualPrayer(prayerKey) {
@@ -162,13 +132,6 @@ export default function DailyCheckIn({
     onUpdate({ ...entry, dhikr: parentDone, adhkarDetails: newAdhkar });
   }
 
-  function toggleHabit(key) {
-    const updated = { ...entry, [key]: !entry[key] };
-    if (key === 'quran' && !updated.quran) { updated.quranPages = null; setQuranExpanded(false); }
-    if (key === 'dhikr' && !updated.dhikr) { updated.adhkarDetails = { morning: false, evening: false, duaa: false }; setAdhkarExpanded(false); }
-    onUpdate(updated);
-  }
-
   function handleQuranPages(value) {
     const raw = value === '' ? null : parseInt(value) || 0;
     const pages = raw === null ? null : Math.min(1000, Math.max(0, raw));
@@ -185,122 +148,93 @@ export default function DailyCheckIn({
     onUpdate(updated);
   }
 
-  function handleNote(value) { onUpdate({ ...entry, note: value }); }
   function submitDay() { onUpdate({ ...entry, submitted: true }); }
   function unsubmitDay() { onUpdate({ ...entry, submitted: false }); }
 
-  function isExpandable(key) { return key === 'prayer' || key === 'quran' || key === 'dhikr'; }
-  function isExpanded(key) {
-    if (key === 'prayer') return prayerExpanded;
-    if (key === 'quran') return quranExpanded;
-    if (key === 'dhikr') return adhkarExpanded;
-    return false;
-  }
-  function toggleExpand(key) {
-    if (key === 'prayer') setPrayerExpanded((p) => !p);
-    else if (key === 'quran') setQuranExpanded((p) => !p);
-    else if (key === 'dhikr') setAdhkarExpanded((p) => !p);
+  function getSubLabel(key) {
+    if (key === 'prayer') return `${toArabicNumeral(completedPrayerCount)}/٥`;
+    if (key === 'quran' && entry.quranPages > 0) return `${toArabicNumeral(entry.quranPages)} صفحة`;
+    if (key === 'dhikr' && adhkarActiveCount > 0) return `${toArabicNumeral(adhkarActiveCount)}/٣`;
+    return null;
   }
 
-  const hijriDate = formatHijriFromYMD(selectedDate);
+  const isSubmitted = !!entry.submitted;
 
   return (
-    <div className="ck">
-      {/* ── Slim date bar ── */}
-      <div className="ck-date-bar">
-        <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}>→</button>
-        <div className="ck-date-center">
-          <span className="ck-date-text">{hijriDate}</span>
-          {!isToday && (
-            <button className="ck-today-btn" onClick={() => onNavigateDate(null)}>اليوم</button>
-          )}
-        </div>
-        <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}>←</button>
-      </div>
-
-      {/* ── Streak dots row ── */}
-      <div className="ck-streak-row">
-        <div className="ck-streak-dots">
-          {streakData.boxes.map((box) => (
-            <button
-              key={box.ymd}
-              className={`ck-dot${box.submitted ? ' done' : ''}${box.isTodayBox ? ' today' : ''}${box.isSelected ? ' sel' : ''}`}
-              onClick={() => onNavigateDate(box.ymd)}
-              title={box.hijriDay}
-            >
-              <span className="ck-dot-num">{box.hijriDay}</span>
-            </button>
-          ))}
-        </div>
-        {streakData.streak > 0 && (
-          <span className="ck-streak-count">🔥 {toArabicNumeral(streakData.streak)}</span>
-        )}
-      </div>
-
-      {/* ── Checklist card with auto-sort ── */}
-      <div className={`card ck-card${isSubmitted ? ' card-submitted' : ''}`}>
-        {sortedHabits.map((habit) => {
+    <div className="ritual">
+      {/* ── Habit cards ── */}
+      <div className="ritual-cards">
+        {HABITS.map((habit) => {
           const done = !!entry[habit.key];
-          const expandable = isExpandable(habit.key);
-          const expanded = isExpanded(habit.key);
+          const expanded = expandedCard === habit.key;
+          const expandable = habit.key === 'prayer' || habit.key === 'quran' || habit.key === 'dhikr';
+          const subLabel = getSubLabel(habit.key);
 
           return (
-            <div key={habit.key} className={`ck-item-wrap${done ? ' ck-item-done' : ''}`}>
-              {/* Main row */}
-              <div
-                className={`ck-row${done ? ' done' : ''}`}
-                onClick={() => {
-                  if (expandable) toggleExpand(habit.key);
-                  else toggleHabit(habit.key);
-                }}
-              >
-                <div
-                  className={`ck-check ${done ? 'on' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (habit.key === 'prayer') togglePrayerMain();
-                    else toggleHabit(habit.key);
-                  }}
-                >
-                  {done && '✓'}
+            <div
+              key={habit.key}
+              className={`ritual-card${done ? ' ritual-card-done' : ''}${expanded ? ' ritual-card-expanded' : ''}`}
+              onClick={() => handleCardTap(habit.key)}
+            >
+              {/* Card main content */}
+              <div className="ritual-card-main">
+                <div className="ritual-card-icon-wrap">
+                  <span className="ritual-card-icon">{habit.icon}</span>
+                  {done && <span className="ritual-card-check">✓</span>}
                 </div>
 
-                <span className="ck-icon">{habit.icon}</span>
-                <span className="ck-name">
-                  {habit.name}
-                  {habit.key === 'prayer' && <span className="ck-sub-count"> {toArabicNumeral(completedPrayerCount)}/٥</span>}
-                  {habit.key === 'quran' && entry.quranPages > 0 && <span className="ck-sub-count"> {toArabicNumeral(entry.quranPages)} ص</span>}
-                  {habit.key === 'dhikr' && adhkarActiveCount > 0 && <span className="ck-sub-count"> {toArabicNumeral(adhkarActiveCount)}/٣</span>}
-                </span>
+                <div className="ritual-card-text">
+                  <span className="ritual-card-name">{habit.name}</span>
+                  {done && <span className="ritual-card-status">تم</span>}
+                  {!done && subLabel && <span className="ritual-card-sub">{subLabel}</span>}
+                  {done && subLabel && <span className="ritual-card-sub done">{subLabel}</span>}
+                </div>
 
-                <div className="ck-row-end">
+                <div className="ritual-card-actions">
                   {habit.key === 'charity' && (
-                    <a className="donate-link" href={EHSAN_LINK} target="_blank" rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}>تبرع ↗</a>
+                    <a
+                      className="ritual-donate-link"
+                      href={EHSAN_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      تبرع
+                    </a>
                   )}
                   {expandable && (
-                    <span className={`ck-chevron ${expanded ? 'open' : ''}`}>‹</span>
+                    <span className={`ritual-card-chevron${expanded ? ' open' : ''}`}>‹</span>
                   )}
                 </div>
               </div>
 
-              {/* Prayer expansion */}
+              {/* ── Prayer expansion ── */}
               {habit.key === 'prayer' && expanded && (
-                <div className="ck-expand">
+                <div className="ritual-expand" onClick={(e) => e.stopPropagation()}>
                   {INDIVIDUAL_PRAYERS.map((p) => (
-                    <div key={p.key} className={`ck-prayer-row${prayers[p.key] ? ' done' : ''}`}
-                      onClick={() => toggleIndividualPrayer(p.key)}>
-                      <div className={`ck-mini-check ${prayers[p.key] ? 'on' : ''}`}
-                        onClick={(e) => { e.stopPropagation(); toggleIndividualPrayer(p.key); }}>
+                    <div
+                      key={p.key}
+                      className={`ritual-prayer-row${prayers[p.key] ? ' done' : ''}`}
+                      onClick={() => toggleIndividualPrayer(p.key)}
+                    >
+                      <div className={`ritual-mini-check${prayers[p.key] ? ' on' : ''}`}>
                         {prayers[p.key] && '✓'}
                       </div>
-                      <span className="ck-prayer-name">{p.name}</span>
-                      <div className="ck-chips">
-                        <button className={`ck-chip${prayerDetails[p.key]?.jamaa ? ' active' : ''}`}
-                          onClick={(e) => { e.stopPropagation(); togglePrayerSub(p.key, 'jamaa'); }}>جماعة</button>
+                      <span className="ritual-prayer-name">{p.name}</span>
+                      <div className="ritual-chips">
+                        <button
+                          className={`ritual-chip${prayerDetails[p.key]?.jamaa ? ' active' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); togglePrayerSub(p.key, 'jamaa'); }}
+                        >
+                          جماعة
+                        </button>
                         {p.key !== 'asr' && (
-                          <button className={`ck-chip${prayerDetails[p.key]?.nafila ? ' active' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); togglePrayerSub(p.key, 'nafila'); }}>نافلة</button>
+                          <button
+                            className={`ritual-chip${prayerDetails[p.key]?.nafila ? ' active' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); togglePrayerSub(p.key, 'nafila'); }}
+                          >
+                            نافلة
+                          </button>
                         )}
                       </div>
                     </div>
@@ -308,32 +242,48 @@ export default function DailyCheckIn({
                 </div>
               )}
 
-              {/* Quran expansion */}
+              {/* ── Quran expansion ── */}
               {habit.key === 'quran' && expanded && (
-                <div className="ck-expand">
-                  <div className="quran-pages-input" style={{ marginTop: 0 }}>
-                    <div className="quran-stepper">
-                      <button className="quran-stepper-btn" onClick={(e) => { e.stopPropagation(); stepQuranPages(-1); }}
-                        disabled={(entry.quranPages ?? 0) <= 0}>−</button>
-                      <input type="number" min="0" max="1000" placeholder="٠"
-                        value={entry.quranPages ?? ''} onChange={(e) => handleQuranPages(e.target.value)}
-                        onClick={(e) => e.stopPropagation()} />
-                      <button className="quran-stepper-btn" onClick={(e) => { e.stopPropagation(); stepQuranPages(+1); }}
-                        disabled={(entry.quranPages ?? 0) >= 1000}>+</button>
-                    </div>
+                <div className="ritual-expand" onClick={(e) => e.stopPropagation()}>
+                  <div className="ritual-quran-stepper">
+                    <button
+                      className="ritual-stepper-btn"
+                      onClick={() => stepQuranPages(-1)}
+                      disabled={(entry.quranPages ?? 0) <= 0}
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1000"
+                      placeholder="٠"
+                      value={entry.quranPages ?? ''}
+                      onChange={(e) => handleQuranPages(e.target.value)}
+                    />
+                    <button
+                      className="ritual-stepper-btn"
+                      onClick={() => stepQuranPages(+1)}
+                      disabled={(entry.quranPages ?? 0) >= 1000}
+                    >
+                      +
+                    </button>
+                    <span className="ritual-stepper-label">صفحة</span>
                   </div>
                 </div>
               )}
 
-              {/* Adhkar expansion */}
+              {/* ── Adhkar expansion ── */}
               {habit.key === 'dhikr' && expanded && (
-                <div className="ck-expand">
-                  <div className="ck-adhkar-row">
+                <div className="ritual-expand" onClick={(e) => e.stopPropagation()}>
+                  <div className="ritual-adhkar-row">
                     {ADHKAR_SUBS.map((sub) => (
-                      <button key={sub.key}
-                        className={`ck-chip ck-chip-lg${adhkarDetails[sub.key] ? ' active' : ''}`}
-                        onClick={(e) => { e.stopPropagation(); toggleAdhkarSub(sub.key); }}>
-                        {adhkarDetails[sub.key] && <span className="ck-chip-tick">✓ </span>}
+                      <button
+                        key={sub.key}
+                        className={`ritual-chip ritual-chip-lg${adhkarDetails[sub.key] ? ' active' : ''}`}
+                        onClick={() => toggleAdhkarSub(sub.key)}
+                      >
+                        {adhkarDetails[sub.key] && <span className="ritual-chip-tick">✓ </span>}
                         {sub.name}
                       </button>
                     ))}
@@ -343,43 +293,65 @@ export default function DailyCheckIn({
             </div>
           );
         })}
-
-        {/* Progress bar */}
-        <div className="ck-progress">
-          <div className="ck-progress-track">
-            <div className="ck-progress-fill" style={{ width: `${percentage}%` }} />
-          </div>
-          <span className="ck-progress-txt">{PROGRESS_MESSAGES[score]}</span>
-        </div>
       </div>
 
-      {/* Submit / submitted */}
+      {/* ── Completion celebration ── */}
+      {allComplete && (
+        <div className="ritual-celebration">
+          <div className="ritual-celebration-icon">🎉</div>
+          <div className="ritual-celebration-title">اليوم مكتمل</div>
+          <div className="ritual-celebration-sub">تقبّل الله منك</div>
+        </div>
+      )}
+
+      {/* ── Submit / Submitted ── */}
       {isSubmitted ? (
-        <div className="submitted-panel">
-          <span className="submitted-text">تم الاعتماد ✅ — الله يثبتك!</span>
-          <button className="submitted-edit-btn" onClick={unsubmitDay}>تعديل</button>
+        <div className="ritual-submitted">
+          <span className="ritual-submitted-text">تم الاعتماد ✅</span>
+          <button className="ritual-submitted-edit" onClick={unsubmitDay}>تعديل</button>
         </div>
       ) : (
-        <button className="btn btn-submit" onClick={submitDay}>اعتماد اليوم</button>
-      )}
-
-      {/* Reflection */}
-      {(!showReflection && !entry.note) ? (
-        <button className="reflection-toggle-btn" onClick={() => setShowReflection(true)} style={{ marginTop: 8 }}>
-          ✏️ تأمل
+        <button className="ritual-submit-btn" onClick={submitDay}>
+          اعتماد اليوم
         </button>
-      ) : (
-        <textarea className="reflection-textarea" placeholder="تأمل اليوم..."
-          value={entry.note || ''} onChange={(e) => handleNote(e.target.value)}
-          autoFocus={showReflection && !entry.note} style={{ marginTop: 8, minHeight: 60 }} />
       )}
 
-      {/* Footer actions */}
-      <div className="ck-footer">
-        <button className="ck-footer-btn danger" onClick={onClearDay}>مسح</button>
+      {/* ── Reflection (optional) ── */}
+      <Reflection entry={entry} onUpdate={onUpdate} />
+
+      {/* ── Clear ── */}
+      <div className="ritual-footer">
+        <button className="ritual-clear-btn" onClick={onClearDay}>مسح اليوم</button>
       </div>
 
       {showSaveToast && <div className="save-toast">✓ تم الحفظ</div>}
     </div>
+  );
+}
+
+/* ── Reflection sub-component ── */
+function Reflection({ entry, onUpdate }) {
+  const [open, setOpen] = useState(false);
+
+  function handleNote(value) {
+    onUpdate({ ...entry, note: value });
+  }
+
+  if (!open && !entry.note) {
+    return (
+      <button className="ritual-reflection-toggle" onClick={() => setOpen(true)}>
+        ✏️ أضف تأملاً
+      </button>
+    );
+  }
+
+  return (
+    <textarea
+      className="ritual-reflection-input"
+      placeholder="تأمل اليوم..."
+      value={entry.note || ''}
+      onChange={(e) => handleNote(e.target.value)}
+      autoFocus={open && !entry.note}
+    />
   );
 }

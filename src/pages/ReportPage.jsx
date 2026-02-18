@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { getTodayYMD, toArabicNumeral, buildHijriMonthDays, formatHijriMonthYear } from '../dateUtils';
 import Calendar from '../components/Calendar';
+import HabitTrackerGrid from '../components/HabitTrackerGrid';
 import useEntries from '../hooks/useEntries';
 
 const HABIT_KEYS = [
@@ -83,6 +84,13 @@ export default function ReportPage() {
           <span className="report-stat-label">يوم مسجّل</span>
         </div>
       </div>
+
+      {/* ── Habit Tracker Grid (moved from daily page) ── */}
+      <HabitTrackerGrid
+        entries={entries}
+        selectedDate={selectedDate}
+        onSelectDate={(ymd) => setSelectedDate(ymd)}
+      />
 
       <div className="card report-habits-card">
         <h3 className="report-section-title">نسبة الالتزام بالعادات</h3>

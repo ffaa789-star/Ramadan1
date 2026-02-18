@@ -9,16 +9,17 @@ import MorePage from './pages/MorePage';
 import AdminPage from './pages/AdminPage';
 import './App.css';
 
-const ONBOARDING_PATHS = ['/', '/onboarding'];
+const HIDE_SHELL_PATHS = ['/', '/onboarding', '/daily'];
 
 export default function App() {
   const location = useLocation();
-  const isOnboarding = ONBOARDING_PATHS.includes(location.pathname);
+  const isOnboarding = location.pathname === '/' || location.pathname === '/onboarding';
+  const hideHeader = HIDE_SHELL_PATHS.includes(location.pathname);
 
   return (
     <>
-      {/* Header — hidden on onboarding */}
-      {!isOnboarding && (
+      {/* Header — hidden on onboarding + daily (daily has its own header) */}
+      {!hideHeader && (
         <header className="app-header app-header-compact">
           <h1 className="app-title">رفيق رمضان</h1>
         </header>
