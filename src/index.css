@@ -54,7 +54,7 @@ body {
 #root {
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 16px 32px;
+  padding: 0 16px 80px;
 }
 
 /* ===== Header ===== */
@@ -78,100 +78,29 @@ body {
   letter-spacing: -0.5px;
 }
 
-.app-subtitle {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  margin-top: 4px;
-  font-weight: 300;
-}
-
-/* ===== Navigation Tabs ===== */
-.nav-tabs {
+/* ===== Loading Screen ===== */
+.loading-screen {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  background: var(--color-surface);
-  border-radius: var(--radius-full);
-  padding: 4px;
-  box-shadow: var(--shadow-sm);
-}
-
-.nav-tab {
-  flex: 1;
-  padding: 10px 12px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-full);
-  font-family: var(--font-primary);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 12px;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all 0.25s ease;
 }
 
-.nav-tab.active {
-  background: var(--color-primary);
-  color: white;
-  box-shadow: var(--shadow-sm);
-}
-
-/* ===== Daily Quote ===== */
-.quote-card {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: white;
-  border-radius: var(--radius-lg);
-  padding: 18px 16px;
-  margin-bottom: 14px;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.quote-card::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.06);
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-.quote-card::after {
-  content: '';
-  position: absolute;
-  bottom: -30px;
-  right: -30px;
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 50%;
-}
-
-.quote-icon {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-  opacity: 0.8;
-}
-
-.quote-text {
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.8;
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
-}
-
-.quote-reference {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  font-weight: 300;
-  position: relative;
-  z-index: 1;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ===== Card ===== */
@@ -181,332 +110,6 @@ body {
   padding: 20px;
   margin-bottom: 16px;
   box-shadow: var(--shadow-sm);
-}
-
-.card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 16px;
-}
-
-/* Compact variant — less padding for daily check-in */
-.card.card-compact {
-  padding: 14px 16px;
-  margin-bottom: 12px;
-}
-
-/* ===== Auto-save Notice ===== */
-.auto-save-notice {
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: 16px;
-  margin-bottom: 8px;
-  font-weight: 300;
-}
-
-/* ===== Date Selector ===== */
-.date-selector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.date-arrow {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: var(--color-surface);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  transition: all 0.2s ease;
-}
-
-.date-arrow:hover {
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
-
-.date-display {
-  min-width: 180px;
-  text-align: center;
-}
-
-.date-hijri {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  line-height: 1.4;
-}
-
-.date-gregorian {
-  font-size: 0.78rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-  margin-top: 2px;
-}
-
-.date-today-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 500;
-  background: var(--color-accent-light);
-  color: var(--color-accent);
-  padding: 2px 10px;
-  border-radius: var(--radius-full);
-  margin-top: 4px;
-}
-
-/* ===== Habit Toggles ===== */
-.habits-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.habit-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  background: var(--color-bg);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.habit-row:active {
-  transform: scale(0.98);
-}
-
-.habit-row.completed {
-  background: var(--color-primary-soft);
-}
-
-.habit-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.habit-icon {
-  font-size: 1.2rem;
-  width: 32px;
-  text-align: center;
-}
-
-.habit-name {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.habit-row-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.habit-toggle {
-  width: 48px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  background: var(--color-toggle-off);
-  position: relative;
-  transition: background 0.3s ease;
-  flex-shrink: 0;
-}
-
-.habit-toggle.on {
-  background: var(--color-toggle-on);
-}
-
-.habit-toggle-knob {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.habit-toggle.on .habit-toggle-knob {
-  transform: translateX(-20px);
-}
-
-/* ===== Prayer Expansion ===== */
-.prayer-count {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  font-weight: 400;
-}
-
-.prayer-chevron {
-  font-size: 1.1rem;
-  color: var(--color-text-muted);
-  transition: transform 0.25s ease;
-  display: inline-block;
-  transform: rotate(-90deg);
-}
-
-.prayer-chevron.expanded {
-  transform: rotate(0deg);
-}
-
-.prayer-expansion {
-  margin-top: 6px;
-  margin-right: 16px;
-  padding: 8px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  animation: slideDown 0.25s ease;
-}
-
-.prayer-mini-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: all 0.2s ease;
-}
-
-.prayer-mini-row:active {
-  transform: scale(0.98);
-}
-
-.prayer-mini-row.completed {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary-soft);
-}
-
-.prayer-mini-name {
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.prayer-mini-toggle {
-  width: 38px;
-  height: 22px;
-  border-radius: var(--radius-full);
-  background: var(--color-toggle-off);
-  position: relative;
-  transition: background 0.3s ease;
-  flex-shrink: 0;
-}
-
-.prayer-mini-toggle.on {
-  background: var(--color-toggle-on);
-}
-
-.prayer-mini-toggle-knob {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-}
-
-.prayer-mini-toggle.on .prayer-mini-toggle-knob {
-  transform: translateX(-16px);
-}
-
-/* ===== Prayer Mini-Row Actions (chips + toggle inline) ===== */
-.prayer-mini-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-/* ===== Sub-Checkbox (inline compact checkboxes for prayer/adhkar) ===== */
-.sub-checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 7px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  font-family: var(--font-primary);
-  font-size: 0.62rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  line-height: 1;
-}
-
-.sub-checkbox:active {
-  transform: scale(0.95);
-}
-
-.sub-checkbox-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 3px;
-  background: white;
-  font-size: 0.55rem;
-  font-weight: 700;
-  color: transparent;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.sub-checkbox.checked .sub-checkbox-box {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-}
-
-.sub-checkbox.checked {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.sub-checkbox-label {
-  line-height: 1.3;
-}
-
-/* ===== Adhkar Sub-Items Grid ===== */
-.adhkar-chips-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
 }
 
 /* ===== Donation Direct Link ===== */
@@ -550,7 +153,7 @@ body {
 
 .quran-stepper input {
   width: 80px;
-  padding: 8px 8px;
+  padding: 8px;
   border: 1.5px solid var(--color-border);
   border-left: none;
   border-right: none;
@@ -616,70 +219,11 @@ body {
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===== Progress Section ===== */
-.progress-section {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
-}
-
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.progress-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-}
-
-.progress-score {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.progress-bar-track {
-  width: 100%;
-  height: 8px;
-  background: var(--color-toggle-off);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
-  border-radius: var(--radius-full);
-  transition: width 0.4s ease;
-}
-
-.progress-message {
-  text-align: center;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  font-weight: 300;
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Reflection ===== */
-.reflection-section {
-  margin-top: 12px;
-}
-
 .reflection-toggle-btn {
   display: flex;
   align-items: center;
@@ -727,29 +271,7 @@ body {
   color: var(--color-text-muted);
 }
 
-/* ===== Sharing Section ===== */
-.sharing-section {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.btn-whatsapp {
-  background: #25d366;
-  color: white;
-}
-
-.btn-whatsapp:hover {
-  background: #1da851;
-}
-
-/* ===== Action Buttons ===== */
-.actions-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
+/* ===== Buttons ===== */
 .btn {
   flex: 1;
   padding: 10px 16px;
@@ -771,6 +293,15 @@ body {
   background: var(--color-border);
 }
 
+.btn-whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background: #1da851;
+}
+
 .btn-danger {
   background: transparent;
   color: var(--color-danger);
@@ -786,7 +317,7 @@ body {
 /* ===== Save Toast ===== */
 .save-toast {
   position: fixed;
-  bottom: 24px;
+  bottom: 90px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--color-primary);
@@ -802,98 +333,13 @@ body {
 }
 
 @keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 @keyframes toastOut {
-  from {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-}
-
-/* ===== Streak Strip ===== */
-.streak-strip {
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.streak-boxes {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-}
-
-.streak-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-primary);
-  padding: 2px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.streak-box:active {
-  transform: scale(0.95);
-}
-
-.streak-box.submitted {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
-}
-
-.streak-box.today {
-  border-color: var(--color-accent);
-  border-width: 2px;
-}
-
-.streak-box.selected {
-  box-shadow: 0 0 0 2px var(--color-primary);
-}
-
-.streak-box-day {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1;
-}
-
-.streak-box.submitted .streak-box-day {
-  color: var(--color-primary);
-}
-
-.streak-box-wd {
-  font-size: 0.5rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-  line-height: 1;
-  margin-top: 1px;
-}
-
-.streak-label {
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: var(--color-primary);
-  margin-top: 6px;
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 0; transform: translateX(-50%) translateY(10px); }
 }
 
 /* ===== Submit Button + Submitted Panel ===== */
@@ -919,6 +365,11 @@ body {
 
 .btn-submit:active {
   transform: scale(0.98);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .submitted-panel {
@@ -959,17 +410,15 @@ body {
   color: white;
 }
 
-/* Submitted card tint */
 .card.card-submitted {
   border: 1.5px solid var(--color-primary);
   background: linear-gradient(180deg, #f5faf0 0%, var(--color-surface) 40%);
 }
 
 /* ================================================================
-   COMPACT MODE (ck-* prefix)
+   COMPACT MODE (ck-* prefix) — only mode now
    ================================================================ */
 
-/* ── Slim date bar ── */
 .ck-date-bar {
   display: flex;
   align-items: center;
@@ -1102,6 +551,15 @@ body {
   border-top: 1px solid var(--color-border);
 }
 
+/* Auto-sort transition */
+.ck-item-wrap {
+  transition: opacity 0.2s ease;
+}
+
+.ck-item-done {
+  opacity: 0.7;
+}
+
 /* ── Main checkbox row ── */
 .ck-row {
   display: flex;
@@ -1191,7 +649,7 @@ body {
   animation: slideDown 0.2s ease;
 }
 
-/* ── Prayer sub-row in compact ── */
+/* ── Prayer sub-row ── */
 .ck-prayer-row {
   display: flex;
   align-items: center;
@@ -1250,7 +708,7 @@ body {
   margin-left: 0;
 }
 
-/* ── Pill chip (shared: used in both compact and classic for prayer/adhkar subs) ── */
+/* ── Pill chip ── */
 .ck-chip {
   padding: 2px 8px;
   border: 1.5px solid var(--color-border);
@@ -1288,7 +746,7 @@ body {
   font-size: 0.6rem;
 }
 
-/* ── Adhkar sub row in compact ── */
+/* ── Adhkar sub row ── */
 .ck-adhkar-row {
   display: flex;
   flex-wrap: wrap;
@@ -1363,47 +821,6 @@ body {
 .ck-footer-btn.danger:hover {
   opacity: 1;
   background: #fdf0ef;
-}
-
-/* ── Settings toggle (shared) ── */
-.ck-settings {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 0;
-  animation: slideDown 0.2s ease;
-}
-
-.ck-settings-label {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-}
-
-.ck-settings-btn {
-  padding: 4px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  font-family: var(--font-primary);
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.ck-settings-btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-  cursor: default;
-}
-
-.ck-settings-btn:not(.active):hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
 }
 
 /* ===== Calendar ===== */
@@ -1524,9 +941,6 @@ body {
   border: 2px solid var(--color-primary);
 }
 
-/* ===== Calendar Day Labels (Hijri BIG, Gregorian small) ===== */
-
-/* Hijri day number — BIG primary label */
 .calendar-day-hijri-num {
   font-size: 0.85rem;
   font-weight: 700;
@@ -1535,7 +949,6 @@ body {
   color: var(--color-text);
 }
 
-/* Gregorian day number — small muted sublabel */
 .calendar-day-greg {
   font-size: 0.5rem;
   font-weight: 400;
@@ -1552,7 +965,6 @@ body {
   color: var(--color-primary);
 }
 
-/* ===== Ramadan Day Highlight (.is-ramadan) ===== */
 .calendar-day.is-ramadan {
   background: var(--color-ramadan-bg);
   border: 1.5px solid var(--color-ramadan-border);
@@ -1572,7 +984,6 @@ body {
   color: var(--color-ramadan-tag);
 }
 
-/* Ramadan tag — tiny label inside each day cell */
 .ramadan-tag {
   font-size: 0.38rem;
   font-weight: 600;
@@ -1615,7 +1026,6 @@ body {
   border-radius: var(--radius-full);
 }
 
-/* ===== Jump to Today Button ===== */
 .jump-today-btn {
   display: block;
   margin: 12px auto 0;
@@ -1636,10 +1046,682 @@ body {
   color: white;
 }
 
+/* ================================================================
+   BOTTOM NAV
+   ================================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  z-index: 900;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px 10px;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-primary);
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item.active {
+  color: var(--color-primary);
+}
+
+.bottom-nav-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.bottom-nav-label {
+  font-size: 0.62rem;
+  font-weight: 500;
+}
+
+/* ================================================================
+   ONBOARDING
+   ================================================================ */
+.onboarding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.onboarding-card {
+  text-align: center;
+  width: 100%;
+}
+
+.onboarding-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.onboarding-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.onboarding-subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 32px;
+}
+
+.onboarding-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.onboarding-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.onboarding-feature-icon {
+  font-size: 1.2rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.onboarding-feature-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.onboarding-btn {
+  margin-top: 8px;
+}
+
+.onboarding-note {
+  margin-top: 20px;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-weight: 300;
+}
+
+/* ================================================================
+   HABIT TRACKER GRID
+   ================================================================ */
+.habit-grid-wrap {
+  margin-top: 16px;
+}
+
+.habit-grid-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.habit-grid-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.habit-grid {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+
+.habit-grid th,
+.habit-grid td {
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 0.65rem;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.habit-grid-corner {
+  position: sticky;
+  right: 0;
+  background: var(--color-surface);
+  z-index: 2;
+  min-width: 70px;
+}
+
+.habit-grid-label {
+  position: sticky;
+  right: 0;
+  background: var(--color-surface);
+  z-index: 1;
+  text-align: right !important;
+  padding-right: 8px !important;
+  min-width: 70px;
+}
+
+.habit-grid-icon {
+  margin-left: 4px;
+}
+
+.habit-grid-name {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.habit-grid-day-header {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  min-width: 28px;
+}
+
+.habit-grid-day-header.today {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.habit-grid-day-header.sel {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.habit-grid-cell {
+  cursor: pointer;
+  color: transparent;
+  min-width: 28px;
+}
+
+.habit-grid-cell.done {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  font-weight: 700;
+}
+
+.habit-grid-cell.sel {
+  box-shadow: inset 0 0 0 1.5px var(--color-primary);
+}
+
+/* ================================================================
+   REPORT PAGE
+   ================================================================ */
+.report-page {
+  padding-top: 4px;
+}
+
+.report-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.report-summary {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.report-stat-card {
+  flex: 1;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.report-stat-num {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.report-stat-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.report-habits-card {
+  padding: 16px;
+}
+
+.report-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.report-habit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.report-habit-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 65px;
+  white-space: nowrap;
+}
+
+.report-habit-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--color-toggle-off);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.report-habit-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.report-habit-pct {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  min-width: 32px;
+  text-align: left;
+}
+
+.report-insights-card {
+  padding: 16px;
+}
+
+.report-insight {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.report-insight strong {
+  color: var(--color-text);
+}
+
+/* ================================================================
+   MORE PAGE
+   ================================================================ */
+.more-page {
+  padding-top: 4px;
+}
+
+.more-card {
+  padding: 16px;
+}
+
+.more-heading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+.more-profile {
+  margin-bottom: 12px;
+}
+
+.more-phone {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  direction: ltr;
+  display: inline-block;
+}
+
+.more-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* ================================================================
+   ADMIN PAGE
+   ================================================================ */
+.admin-page {
+  padding-top: 4px;
+}
+
+.admin-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-family: var(--font-primary);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-filter-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.admin-users-card {
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: 6px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table td {
+  padding: 8px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  padding: 16px 0;
+}
+
+.admin-notif-card {
+  padding: 16px;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.admin-input:focus {
+  border-color: var(--color-primary);
+}
+
+.admin-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  outline: none;
+  resize: vertical;
+  margin-bottom: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.admin-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.admin-notif-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 0.78rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  outline: none;
+}
+
+/* ================================================================
+   NOTIFICATION BELL
+   ================================================================ */
+.notif-bell-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.notif-bell-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0;
+  position: relative;
+  line-height: 1;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--color-danger);
+  color: white;
+  font-size: 0.5rem;
+  font-weight: 700;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.notif-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  max-height: 320px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.notif-mark-all {
+  background: none;
+  border: none;
+  font-family: var(--font-primary);
+  font-size: 0.68rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.notif-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.notif-list {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.notif-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item.unread {
+  background: var(--color-primary-soft);
+}
+
+.notif-item:hover {
+  background: var(--color-bg);
+}
+
+.notif-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.notif-body {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ===== Daily Quote ===== */
+.quote-card {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-card::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+}
+
+.quote-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+}
+
+.quote-icon {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.quote-text {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.8;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.quote-reference {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: 300;
+  position: relative;
+  z-index: 1;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 400px) {
   #root {
-    padding: 0 12px 24px;
+    padding: 0 12px 80px;
   }
 
   .app-title {
@@ -1652,42 +1734,6 @@ body {
 
   .calendar-day-hijri-num {
     font-size: 0.75rem;
-  }
-
-  .habit-row {
-    padding: 8px 10px;
-  }
-
-  .prayer-mini-row {
-    padding: 6px 10px;
-  }
-
-  .quote-card {
-    padding: 14px 12px;
-  }
-
-  .sharing-section {
-    flex-direction: column;
-  }
-
-  .streak-box {
-    width: 36px;
-    height: 36px;
-  }
-
-  .streak-box-day {
-    font-size: 0.72rem;
-  }
-
-  .sub-checkbox {
-    padding: 2px 5px;
-    font-size: 0.58rem;
-  }
-
-  .sub-checkbox-box {
-    width: 12px;
-    height: 12px;
-    font-size: 0.5rem;
   }
 
   .ck-date-text {

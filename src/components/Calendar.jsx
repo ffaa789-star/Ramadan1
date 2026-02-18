@@ -13,7 +13,7 @@ import {
 /* Saturday-first weekday headers */
 const WEEKDAYS = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
 
-const HABIT_KEYS = ['prayer', 'quran', 'qiyam', 'charity', 'dhikr'];
+const HABIT_KEYS = ['prayer', 'quran', 'fasting', 'qiyam', 'charity', 'dhikr'];
 
 function getScore(entry) {
   if (!entry) return 0;
@@ -161,7 +161,7 @@ export default function Calendar({ entries, selectedDate, onSelectDate, calendar
                   <div className="calendar-day-progress">
                     <div
                       className="calendar-day-progress-fill"
-                      style={{ width: `${(score / 5) * 100}%` }}
+                      style={{ width: `${(score / 6) * 100}%` }}
                     />
                   </div>
                 </>
