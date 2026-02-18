@@ -1,7 +1,7 @@
 import { useAuth } from '../contexts/AuthContext';
 
 export default function MorePage() {
-  const { profile, signOut } = useAuth();
+  const { profile, session, signOut } = useAuth();
 
   function shareWhatsApp() {
     const text = `رفيق رمضان 🌙 — سجّل عباداتك اليومية بسهولة: ${window.location.origin}`;
@@ -14,17 +14,20 @@ export default function MorePage() {
 
   return (
     <div className="more-page">
-      <div className="card more-card">
-        <h2 className="more-heading">الحساب</h2>
-        {profile && (
-          <div className="more-profile">
-            <span className="more-phone">{profile.phone}</span>
-          </div>
-        )}
-        <button className="btn btn-secondary more-btn" onClick={signOut}>
-          تسجيل الخروج
-        </button>
-      </div>
+      {/* Only show account section if user has a session */}
+      {session && (
+        <div className="card more-card">
+          <h2 className="more-heading">الحساب</h2>
+          {profile && (
+            <div className="more-profile">
+              <span className="more-phone">{profile.phone}</span>
+            </div>
+          )}
+          <button className="btn btn-secondary more-btn" onClick={signOut}>
+            تسجيل الخروج
+          </button>
+        </div>
+      )}
 
       <div className="card more-card">
         <h2 className="more-heading">مشاركة</h2>

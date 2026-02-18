@@ -11,7 +11,7 @@ export default function NotificationBell() {
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   useEffect(() => {
-    if (!userId) return;
+    if (!supabase || !userId) return;
     fetchNotifications();
   }, [userId]);
 
@@ -25,6 +25,7 @@ export default function NotificationBell() {
   }, []);
 
   async function fetchNotifications() {
+    if (!supabase) return;
     const { data } = await supabase
       .from('notifications')
       .select('*')
@@ -35,6 +36,7 @@ export default function NotificationBell() {
   }
 
   async function markRead(id) {
+    if (!supabase) return;
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
@@ -42,11 +44,15 @@ export default function NotificationBell() {
   }
 
   async function markAllRead() {
+    if (!supabase) return;
     const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id);
     if (unreadIds.length === 0) return;
     await supabase.from('notifications').update({ is_read: true }).in('id', unreadIds);
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
   }
+
+  // In local-only mode, hide the bell entirely
+  if (!supabase) return null;
 
   return (
     <div className="notif-bell-wrap" ref={ref}>

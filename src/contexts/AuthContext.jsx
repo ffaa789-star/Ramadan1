@@ -4,11 +4,15 @@ import { supabase } from '../lib/supabase';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(undefined); // undefined = loading
+  // When supabase is null (env vars missing) we skip auth entirely.
+  // session starts as null (not undefined) so loading = false immediately.
+  const [session, setSession] = useState(supabase ? undefined : null);
   const [profile, setProfile] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    if (!supabase) return; // local-only mode — no auth
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
@@ -31,6 +35,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchProfile(userId) {
+    if (!supabase) return;
     const { data } = await supabase
       .from('profiles')
       .select('*')
@@ -43,13 +48,13 @@ export function AuthProvider({ children }) {
   }
 
   async function signInAnonymously(phone) {
-    // Sign in anonymously
+    if (!supabase) return null;
+
     const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
     if (authError) throw authError;
 
     const userId = authData.user.id;
 
-    // Create profile with phone
     const { error: profileError } = await supabase
       .from('profiles')
       .upsert({
@@ -65,7 +70,9 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     setSession(null);
     setProfile(null);
     setIsAdmin(false);

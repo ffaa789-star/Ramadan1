@@ -24,16 +24,29 @@ function loadLocalEntries() {
   return {};
 }
 
+function saveLocalEntries(entries) {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ entries }));
+  } catch { /* ignore */ }
+}
+
 export default function useEntries() {
   const { userId } = useAuth();
   const [entries, setEntries] = useState({});
   const [loading, setLoading] = useState(true);
   const hasMigrated = useRef(false);
 
-  // Fetch all entries from Supabase on mount / userId change
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
+    // ── Local-only mode (no supabase or no userId) ──
+    if (!supabase || !userId) {
+      // Load from localStorage so the app works without backend
+      const local = loadLocalEntries();
+      setEntries(local);
+      setLoading(false);
+      return;
+    }
 
+    // ── Supabase mode ──
     async function init() {
       setLoading(true);
 
@@ -77,23 +90,19 @@ export default function useEntries() {
   const updateEntry = useCallback(
     async (dateYmd, updated) => {
       // Optimistic local update
-      setEntries((prev) => ({ ...prev, [dateYmd]: updated }));
+      setEntries((prev) => {
+        const next = { ...prev, [dateYmd]: updated };
+        saveLocalEntries(next);
+        return next;
+      });
 
-      // Write-through to Supabase
-      if (userId) {
+      // Write-through to Supabase (only when available)
+      if (supabase && userId) {
         const row = entryToRow(updated, userId, dateYmd);
         await supabase
           .from('daily_entries')
           .upsert(row, { onConflict: 'user_id,date_ymd' });
       }
-
-      // Also keep localStorage as offline cache
-      setEntries((prev) => {
-        try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ entries: prev }));
-        } catch { /* ignore */ }
-        return prev;
-      });
     },
     [userId]
   );
@@ -103,13 +112,11 @@ export default function useEntries() {
       setEntries((prev) => {
         const next = { ...prev };
         delete next[dateYmd];
-        try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ entries: next }));
-        } catch { /* ignore */ }
+        saveLocalEntries(next);
         return next;
       });
 
-      if (userId) {
+      if (supabase && userId) {
         await supabase
           .from('daily_entries')
           .delete()

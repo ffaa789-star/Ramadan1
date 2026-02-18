@@ -16,6 +16,8 @@ export default function AdminPage() {
   }, []);
 
   async function fetchUsers() {
+    if (!supabase) { setLoading(false); return; }
+
     setLoading(true);
     const { data: profiles } = await supabase
       .from('profiles')
@@ -85,6 +87,7 @@ export default function AdminPage() {
   });
 
   async function sendNotification() {
+    if (!supabase) return;
     if (!notifTitle.trim() || !notifBody.trim()) return;
     setSendingNotif(true);
 
@@ -109,6 +112,18 @@ export default function AdminPage() {
       <div className="loading-screen">
         <div className="loading-spinner" />
         <span>جاري التحميل...</span>
+      </div>
+    );
+  }
+
+  // Show message when supabase is not configured
+  if (!supabase) {
+    return (
+      <div className="admin-page">
+        <h2 className="admin-title">لوحة الإدارة</h2>
+        <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>لوحة الإدارة غير متوفرة في الوضع المحلي</p>
+        </div>
       </div>
     );
   }
