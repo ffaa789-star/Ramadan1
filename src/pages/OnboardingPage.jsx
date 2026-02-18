@@ -1,43 +1,32 @@
 import { useNavigate } from 'react-router-dom';
 
-const FEATURES = [
-  { icon: '🕌', text: 'الصلوات (مع الجماعة والنافلة)' },
-  { icon: '📖', text: 'ورد القرآن' },
-  { icon: '📿', text: 'الأذكار' },
-  { icon: '🌃', text: 'القيام' },
-  { icon: '🍽️', text: 'الصيام والصدقة' },
-];
-
 export default function OnboardingPage() {
   const navigate = useNavigate();
 
   return (
     <div className="onboarding">
       <div className="onboarding-card">
-        <div className="onboarding-icon">🌙</div>
+        <div className="onboarding-moon">🌙</div>
+
         <h1 className="onboarding-title">رفيق رمضان</h1>
-        <p className="onboarding-subtitle">
-          متابعة يومية بسيطة تساعدك تثبت على العبادات خلال الشهر
+
+        <p className="onboarding-tagline">
+          مكان بسيط تختم فيه يومك في رمضان
         </p>
 
-        <ul className="onboarding-features">
-          {FEATURES.map((f) => (
-            <li key={f.text} className="onboarding-feature">
-              <span className="onboarding-feature-icon">{f.icon}</span>
-              <span className="onboarding-feature-text">{f.text}</span>
-            </li>
-          ))}
-        </ul>
+        <p className="onboarding-desc">
+          سجّل عباداتك بهدوء، وتابع مسيرتك يوم بيوم.
+        </p>
 
         <button
-          className="btn btn-submit onboarding-btn"
+          className="onboarding-cta"
           onClick={() => navigate('/daily', { replace: true })}
         >
-          ابدأ رحلتك
+          ابدأ
         </button>
 
-        <p className="onboarding-note">
-          بياناتك محفوظة في جهازك فقط — هدفنا الاستمرارية لا التعقيد
+        <p className="onboarding-privacy">
+          بياناتك على جهازك فقط — لا حساب ولا تسجيل
         </p>
       </div>
     </div>
