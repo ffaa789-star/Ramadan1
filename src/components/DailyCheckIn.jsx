@@ -49,6 +49,7 @@ export default function DailyCheckIn({
   const [quranExpanded, setQuranExpanded] = useState(false);
   const [adhkarExpanded, setAdhkarExpanded] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
+  const [editing, setEditing] = useState(false);
   const isFirstRender = useRef(true);
 
   const prayers = entry.prayers || {
@@ -69,7 +70,13 @@ export default function DailyCheckIn({
   const percentage = (score / 6) * 100;
   const completedPrayerCount = INDIVIDUAL_PRAYERS.filter((p) => prayers[p.key]).length;
   const isSubmitted = !!entry.submitted;
+  const locked = isSubmitted && !editing;
   const adhkarActiveCount = ADHKAR_SUBS.filter((s) => adhkarDetails[s.key]).length;
+
+  // Reset editing state when navigating to a different day
+  useEffect(() => {
+    setEditing(false);
+  }, [selectedDate]);
 
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
@@ -78,7 +85,7 @@ export default function DailyCheckIn({
     return () => clearTimeout(timer);
   }, [entry]);
 
-  /* ── Streak count (no boxes/strip) ── */
+  /* ── Streak count ── */
   const streakCount = useMemo(() => {
     let streak = 0;
     let cur = selectedDate;
@@ -89,24 +96,24 @@ export default function DailyCheckIn({
     return streak;
   }, [selectedDate, entries]);
 
-  /* ── Action handlers ── */
+  /* ── Action handlers (all guarded by locked) ── */
 
-  // Parent prayer toggles independently — does NOT wipe subs
   function togglePrayerMain() {
+    if (locked) return;
     const newVal = !entry.prayer;
     onUpdate({ ...entry, prayer: newVal });
   }
 
-  // Toggling individual prayer is just a detail — does NOT auto-complete parent "الصلاة"
   function toggleIndividualPrayer(prayerKey) {
+    if (locked) return;
     const newPrayers = { ...prayers, [prayerKey]: !prayers[prayerKey] };
     const newDetails = { ...prayerDetails };
     if (!newPrayers[prayerKey]) newDetails[prayerKey] = { jamaa: false, nafila: false };
     onUpdate({ ...entry, prayers: newPrayers, prayerDetails: newDetails });
   }
 
-  // Prayer sub-details (jamaa/nafila) — just details, do NOT auto-complete anything
   function togglePrayerSub(prayerKey, subKey) {
+    if (locked) return;
     if (prayerKey === 'asr' && subKey === 'nafila') return;
     const oldSub = prayerDetails[prayerKey] || { jamaa: false, nafila: false };
     const newSubVal = !oldSub[subKey];
@@ -114,25 +121,27 @@ export default function DailyCheckIn({
     onUpdate({ ...entry, prayerDetails: newDetails });
   }
 
-  // Parent adhkar toggles independently — does NOT wipe subs
   function toggleAdhkarParent() {
+    if (locked) return;
     const newVal = !entry.dhikr;
     onUpdate({ ...entry, dhikr: newVal });
   }
 
-  // Toggling adhkar sub is just a detail — does NOT auto-complete parent "الأذكار"
   function toggleAdhkarSub(subKey) {
+    if (locked) return;
     const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
     onUpdate({ ...entry, adhkarDetails: newAdhkar });
   }
 
   function toggleHabit(key) {
+    if (locked) return;
     const updated = { ...entry, [key]: !entry[key] };
     if (key === 'quran' && !updated.quran) { updated.quranPages = null; setQuranExpanded(false); }
     onUpdate(updated);
   }
 
   function handleQuranPages(value) {
+    if (locked) return;
     const raw = value === '' ? null : parseInt(value) || 0;
     const pages = raw === null ? null : Math.min(1000, Math.max(0, raw));
     const updated = { ...entry, quranPages: pages };
@@ -141,6 +150,7 @@ export default function DailyCheckIn({
   }
 
   function stepQuranPages(delta) {
+    if (locked) return;
     const current = entry.quranPages ?? 0;
     const next = Math.min(1000, Math.max(0, current + delta));
     const updated = { ...entry, quranPages: next === 0 ? null : next };
@@ -148,9 +158,13 @@ export default function DailyCheckIn({
     onUpdate(updated);
   }
 
-  function handleNote(value) { onUpdate({ ...entry, note: value }); }
-  function submitDay() { onUpdate({ ...entry, submitted: true }); }
-  function unsubmitDay() { onUpdate({ ...entry, submitted: false }); }
+  function handleNote(value) {
+    if (locked) return;
+    onUpdate({ ...entry, note: value });
+  }
+
+  function submitDay() { onUpdate({ ...entry, submitted: true }); setEditing(false); }
+  function startEditing() { setEditing(true); }
 
   function isExpandable(key) { return key === 'prayer' || key === 'quran' || key === 'dhikr'; }
   function isExpanded(key) {
@@ -160,6 +174,7 @@ export default function DailyCheckIn({
     return false;
   }
   function toggleExpand(key) {
+    if (locked) return;
     if (key === 'prayer') setPrayerExpanded((p) => !p);
     else if (key === 'quran') setQuranExpanded((p) => !p);
     else if (key === 'dhikr') setAdhkarExpanded((p) => !p);
@@ -169,38 +184,60 @@ export default function DailyCheckIn({
 
   return (
     <div className="ck">
-      {/* ── Date bar ── */}
+      {/* ── Date bar with inline streak — FIXED HEIGHT ── */}
       <div className="ck-date-bar">
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}>→</button>
         <div className="ck-date-center">
           <span className="ck-date-text">{hijriDate}</span>
+          {isToday && <span className="ck-today-label">اليوم</span>}
           {!isToday && (
-            <button className="ck-today-btn" onClick={() => onNavigateDate(null)}>اليوم</button>
+            <button className="ck-back-today-btn" onClick={() => onNavigateDate(null)}>العودة لليوم</button>
           )}
         </div>
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}>←</button>
       </div>
 
-      {/* ── Streak text (no strip/dots) ── */}
-      {streakCount > 0 && (
-        <div className="ck-streak-text">
-          🔥 {toArabicNumeral(streakCount)} يوم متتابع
+      {/* ── Streak inline row — always same height ── */}
+      <div className="ck-streak-row">
+        {streakCount > 0
+          ? <span className="ck-streak-text">🔥 {toArabicNumeral(streakCount)} يوم متتابع</span>
+          : <span className="ck-streak-text ck-streak-empty">&nbsp;</span>
+        }
+      </div>
+
+      {/* ── Submitted badge (when locked) ── */}
+      {isSubmitted && !editing && (
+        <div className="ck-submitted-badge">
+          <span>تم الاعتماد ✅</span>
+          <button className="ck-edit-btn" onClick={startEditing}>تعديل</button>
         </div>
       )}
 
-      {/* ── Habit list card — fixed order (HABITS array, no sorting) ── */}
-      <div className={`card ck-card${isSubmitted ? ' card-submitted' : ''}`}>
-        {HABITS.map((habit) => {
+      {/* ── Editing badge (when editing a submitted day) ── */}
+      {isSubmitted && editing && (
+        <div className="ck-editing-badge">
+          <span>وضع التعديل ✏️</span>
+          <button className="ck-done-edit-btn" onClick={submitDay}>حفظ</button>
+        </div>
+      )}
+
+      {/* ── Habit list card — fixed order, no reorder ── */}
+      <div className={`card ck-card${locked ? ' card-locked' : ''}${isSubmitted ? ' card-submitted' : ''}`}>
+        {HABITS.map((habit, idx) => {
           const done = !!entry[habit.key];
           const expandable = isExpandable(habit.key);
           const expanded = isExpanded(habit.key);
 
           return (
             <div key={habit.key} className="ck-item-wrap">
+              {/* Divider between habits (not before first) */}
+              {idx > 0 && <div className="ck-divider" />}
+
               {/* Main row — icon + name on right, toggle switch on left */}
               <div
                 className={`ck-row${done ? ' done' : ''}`}
                 onClick={() => {
+                  if (locked) return;
                   if (expandable) toggleExpand(habit.key);
                   else toggleHabit(habit.key);
                 }}
@@ -225,9 +262,10 @@ export default function DailyCheckIn({
 
                 {/* Left side: toggle switch */}
                 <div
-                  className={`ck-toggle ${done ? 'on' : ''}`}
+                  className={`ck-toggle ${done ? 'on' : ''}${locked ? ' disabled' : ''}`}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (locked) return;
                     if (habit.key === 'prayer') togglePrayerMain();
                     else if (habit.key === 'dhikr') toggleAdhkarParent();
                     else toggleHabit(habit.key);
@@ -238,7 +276,7 @@ export default function DailyCheckIn({
               </div>
 
               {/* Prayer expansion */}
-              {habit.key === 'prayer' && expanded && (
+              {habit.key === 'prayer' && expanded && !locked && (
                 <div className="ck-expand">
                   {INDIVIDUAL_PRAYERS.map((p) => (
                     <div key={p.key} className={`ck-prayer-row${prayers[p.key] ? ' done' : ''}`}
@@ -262,7 +300,7 @@ export default function DailyCheckIn({
               )}
 
               {/* Quran expansion */}
-              {habit.key === 'quran' && expanded && (
+              {habit.key === 'quran' && expanded && !locked && (
                 <div className="ck-expand">
                   <div className="quran-pages-input" style={{ marginTop: 0 }}>
                     <div className="quran-stepper">
@@ -279,7 +317,7 @@ export default function DailyCheckIn({
               )}
 
               {/* Adhkar expansion */}
-              {habit.key === 'dhikr' && expanded && (
+              {habit.key === 'dhikr' && expanded && !locked && (
                 <div className="ck-expand">
                   <div className="ck-adhkar-row">
                     {ADHKAR_SUBS.map((sub) => (
@@ -307,31 +345,39 @@ export default function DailyCheckIn({
         </div>
       </div>
 
-      {/* Submit / submitted */}
-      {isSubmitted ? (
-        <div className="submitted-panel">
-          <span className="submitted-text">تم الاعتماد ✅ — الله يثبتك!</span>
-          <button className="submitted-edit-btn" onClick={unsubmitDay}>تعديل</button>
-        </div>
-      ) : (
+      {/* Submit button (only when NOT submitted and NOT editing) */}
+      {!isSubmitted && (
         <button className="btn btn-submit" onClick={submitDay}>اعتماد اليوم</button>
       )}
 
-      {/* Reflection */}
-      {(!showReflection && !entry.note) ? (
-        <button className="reflection-toggle-btn" onClick={() => setShowReflection(true)} style={{ marginTop: 8 }}>
-          ✏️ تأمل
-        </button>
-      ) : (
-        <textarea className="reflection-textarea" placeholder="تأمل اليوم..."
-          value={entry.note || ''} onChange={(e) => handleNote(e.target.value)}
-          autoFocus={showReflection && !entry.note} style={{ marginTop: 8, minHeight: 60 }} />
+      {/* Reflection — hidden when locked */}
+      {!locked && (
+        <>
+          {(!showReflection && !entry.note) ? (
+            <button className="reflection-toggle-btn" onClick={() => setShowReflection(true)} style={{ marginTop: 8 }}>
+              ✏️ تأمل
+            </button>
+          ) : (
+            <textarea className="reflection-textarea" placeholder="تأمل اليوم..."
+              value={entry.note || ''} onChange={(e) => handleNote(e.target.value)}
+              autoFocus={showReflection && !entry.note} style={{ marginTop: 8, minHeight: 60 }} />
+          )}
+        </>
       )}
 
-      {/* Footer actions */}
-      <div className="ck-footer">
-        <button className="ck-footer-btn danger" onClick={onClearDay}>مسح</button>
-      </div>
+      {/* Show note read-only when locked and has content */}
+      {locked && entry.note && (
+        <div className="ck-note-readonly" style={{ marginTop: 8 }}>
+          {entry.note}
+        </div>
+      )}
+
+      {/* Footer actions — hidden when locked */}
+      {!locked && (
+        <div className="ck-footer">
+          <button className="ck-footer-btn danger" onClick={onClearDay}>مسح</button>
+        </div>
+      )}
 
       {showSaveToast && <div className="save-toast">✓ تم الحفظ</div>}
     </div>

@@ -403,8 +403,9 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 8px;
-  padding-top: 4px;
+  height: 44px;
+  margin-bottom: 0;
+  padding-top: 0;
 }
 
 .ck-arrow {
@@ -445,13 +446,27 @@ body {
   text-overflow: ellipsis;
 }
 
-.ck-today-btn {
-  padding: 4px 12px;
+/* ── "اليوم" label — green badge shown when viewing today ── */
+.ck-today-label {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── "العودة لليوم" button — shown when viewing past/future ── */
+.ck-back-today-btn {
+  padding: 3px 10px;
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-full);
   background: var(--color-accent-light);
   font-family: var(--font-primary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: var(--color-accent);
   cursor: pointer;
@@ -459,13 +474,104 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Streak text ── */
+/* ── Streak row — FIXED HEIGHT to prevent layout shift ── */
+.ck-streak-row {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
 .ck-streak-text {
-  text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-primary);
-  margin-bottom: 6px;
+  text-align: center;
+}
+
+.ck-streak-text.ck-streak-empty {
+  visibility: hidden;
+}
+
+/* ── Submitted badge ── */
+.ck-submitted-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  border: 1.5px solid var(--color-primary);
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ck-edit-btn {
+  padding: 4px 14px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.ck-edit-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ── Editing badge ── */
+.ck-editing-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-light);
+  border: 1.5px solid var(--color-accent);
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #8a7630;
+}
+
+.ck-done-edit-btn {
+  padding: 4px 14px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.ck-done-edit-btn:hover {
+  background: #b89a3e;
+}
+
+/* ── Read-only note (locked) ── */
+.ck-note-readonly {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  direction: rtl;
 }
 
 /* ── Checklist card ── */
@@ -475,31 +581,34 @@ body {
   border-radius: var(--radius-lg) !important;
 }
 
-.ck-item-wrap + .ck-item-wrap {
-  margin-top: 4px;
+/* ── Divider between habits ── */
+.ck-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0 4px;
 }
 
-/* ── Main habit row — large tap targets, light-green bg ── */
+/* ── Main habit row — WHITE default, GREEN when done, tall for accessibility ── */
 .ck-row {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 12px 12px;
-  min-height: 58px;
+  height: 64px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease;
+  transition: background 0.2s ease;
   border-radius: var(--radius-sm);
-  background: var(--color-primary-soft);
+  background: var(--color-surface);
 }
 
 .ck-row:active {
-  background: #dde8d2;
+  background: var(--color-bg);
 }
 
 .ck-row.done {
-  background: #d4e6c5;
+  background: var(--color-primary-soft);
 }
 
 /* ── Toggle switch (replaces checkbox) ── */
@@ -535,6 +644,27 @@ body {
 .ck-toggle.on .ck-toggle-knob {
   right: auto;
   left: 3px;
+}
+
+.ck-toggle.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Locked card (submitted, not editing) ── */
+.card-locked {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.card-locked .ck-row {
+  cursor: default;
+}
+
+/* Re-enable pointer events on the card itself so edit button works */
+.ck-submitted-badge,
+.ck-editing-badge {
+  pointer-events: auto;
 }
 
 .ck-icon {
@@ -762,117 +892,47 @@ body {
   background: #fdf0ef;
 }
 
-/* ===== Daily Page Header ===== */
-.daily-header {
-  text-align: center;
-  padding: 16px 0 6px;
+/* ===== Daily Page ===== */
+.daily-page {
+  padding-top: 2px;
 }
 
-.daily-header-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin: 0;
-  line-height: 1.3;
-}
-
-.daily-header-subtitle {
-  font-size: 0.82rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-  margin: 2px 0 0;
-}
-
-/* ===== Segmented Tab Control ===== */
-.seg-tabs {
+/* ===== Daily Quote — Compact Banner ===== */
+.quote-banner {
   display: flex;
-  background: var(--color-primary-soft);
-  border-radius: var(--radius-md);
-  padding: 3px;
-  margin-bottom: 12px;
-  gap: 3px;
-}
-
-.seg-tab {
-  flex: 1;
-  padding: 10px 8px;
-  border: none;
-  border-radius: 10px;
-  font-family: var(--font-primary);
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: transparent;
-  color: var(--color-primary);
-  white-space: nowrap;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.seg-tab.active {
-  background: var(--color-primary);
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  margin-top: 4px;
   box-shadow: var(--shadow-sm);
 }
 
-.seg-tab:not(.active):hover {
-  background: rgba(45, 80, 22, 0.08);
-}
-
-/* ===== Daily Quote — Big Always-Expanded Green Card ===== */
-.quote-card-big {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: white;
-  border-radius: var(--radius-lg);
-  padding: 24px 20px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-md);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.quote-card-big::before {
-  content: '';
-  position: absolute;
-  top: -30px;
-  left: -30px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-}
-
-.quote-card-big::after {
-  content: '';
-  position: absolute;
-  bottom: -20px;
-  right: -20px;
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 50%;
-}
-
-.quote-big-moon {
-  font-size: 2rem;
-  margin-bottom: 10px;
+.quote-banner-moon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
   line-height: 1;
 }
 
-.quote-big-text {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.9;
-  margin-bottom: 8px;
-  position: relative;
+.quote-banner-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.quote-big-ref {
-  font-size: 0.72rem;
+.quote-banner-text {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.quote-banner-ref {
+  font-size: 0.65rem;
   opacity: 0.65;
   font-weight: 300;
-  position: relative;
+  margin-top: 2px;
 }
 
 /* ===== Calendar ===== */
@@ -1710,17 +1770,8 @@ body {
     padding: 0 10px 72px;
   }
 
-  .daily-header-title {
-    font-size: 1.3rem;
-  }
-
-  .seg-tab {
-    font-size: 0.7rem;
-    padding: 8px 6px;
-  }
-
-  .quote-big-text {
-    font-size: 0.92rem;
+  .quote-banner-text {
+    font-size: 0.78rem;
   }
 
   .ck-date-text {
@@ -1739,6 +1790,10 @@ body {
 
   .ck-name {
     font-size: 0.92rem;
+  }
+
+  .ck-row {
+    height: 58px;
   }
 
   .ck-chip {
