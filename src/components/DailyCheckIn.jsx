@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   addDaysYMD,
   getTodayYMD,
@@ -71,14 +71,7 @@ export default function DailyCheckIn({
     return () => clearTimeout(timer);
   }, [entry]);
 
-  const streakCount = useMemo(() => {
-    let s = 0, cur = selectedDate;
-    for (let i = 0; i < 365; i++) {
-      if (entries[cur]?.submitted) { s++; cur = addDaysYMD(cur, -1); }
-      else break;
-    }
-    return s;
-  }, [selectedDate, entries]);
+  // Streak removed from here — now shown in DailyPage header
 
   /* ── Handlers ── */
   function toggle(key) {
@@ -155,7 +148,6 @@ export default function DailyCheckIn({
         <button className="cl-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}>→</button>
         <div className="cl-date-center">
           <span className="cl-date-text">{hijriDate}</span>
-          {streakCount > 0 && <span className="cl-streak">🔥 {toArabicNumeral(streakCount)}</span>}
         </div>
         <button className="cl-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}>←</button>
       </div>
@@ -184,7 +176,7 @@ export default function DailyCheckIn({
       </div>
 
       {/* ── Flat habit list — paper checklist ── */}
-      <div className="cl-list">
+      <div className={`cl-list${dayState === 'approved' ? ' cl-list-faded' : ''}`}>
         {HABITS.map((h, i) => {
           const done = !!entry[h.key];
           const isOpen = expanded === h.key;
@@ -305,7 +297,7 @@ export default function DailyCheckIn({
       <div className="cl-action">
         {dayState === 'approved'
           ? <span className="cl-action-empty" />
-          : <button className="cl-approve" onClick={submitDay}>اعتماد اليوم</button>
+          : <button className="cl-approve" onClick={submitDay}>تأكيد الإنجاز</button>
         }
       </div>
 

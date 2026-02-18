@@ -412,9 +412,11 @@ body {
 }
 
 .cl-strip-approved {
-  background: var(--color-primary-soft);
+  background: var(--color-primary);
   border: 1.5px solid var(--color-primary);
-  color: var(--color-primary);
+  color: white;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(45, 80, 22, 0.25);
 }
 
 .cl-strip-editing {
@@ -455,6 +457,14 @@ body {
   padding: 4px 0;
   margin-bottom: 8px;
   box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+/* ── Approved state: faded habits with soft overlay ── */
+.cl-list-faded {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 /* ── Thin divider between habits ── */
@@ -729,19 +739,20 @@ body {
   display: block;
   width: 100%;
   height: 44px;
-  border: none;
+  border: 1.5px solid var(--color-primary);
   border-radius: var(--radius-md);
-  background: var(--color-primary);
-  color: white;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-family: var(--font-primary);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cl-approve:hover {
-  background: var(--color-primary-light);
+  background: var(--color-primary);
+  color: white;
 }
 
 .cl-approve:active {
@@ -791,6 +802,13 @@ body {
   font-weight: 400;
   color: var(--color-text-muted);
   margin: 0;
+}
+
+.daily-header-streak {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-top: 2px;
 }
 
 /* ===== Daily Quote — Compact Banner ===== */
@@ -1097,8 +1115,8 @@ body {
 }
 
 .bottom-nav-label {
-  font-size: 0.6rem;
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 /* ================================================================
