@@ -33,6 +33,7 @@ const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
 
 export default function DailyCheckIn({
   entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay,
+  tourExpandPrayer,
 }) {
   const [expanded, setExpanded] = useState(null); // only one at a time
   const [showSaveToast, setShowSaveToast] = useState(false);
@@ -70,6 +71,11 @@ export default function DailyCheckIn({
     const timer = setTimeout(() => setShowSaveToast(false), 800);
     return () => clearTimeout(timer);
   }, [entry]);
+
+  // Tour: auto-expand prayer when requested
+  useEffect(() => {
+    if (tourExpandPrayer) setExpanded('prayer');
+  }, [tourExpandPrayer]);
 
   /* ── Handlers ── */
   function toggle(key) {
@@ -184,7 +190,7 @@ export default function DailyCheckIn({
       </div>
 
       {/* ── Flat habit list — paper checklist ── */}
-      <div className={`cl-list${dayState === 'approved' ? ' cl-list-faded' : ''}`}>
+      <div className={`cl-list${dayState === 'approved' ? ' cl-list-faded' : ''}`} data-tour="daily-list">
         {HABITS.map((h, i) => {
           const done = !!entry[h.key];
           const isOpen = expanded === h.key;
@@ -206,6 +212,7 @@ export default function DailyCheckIn({
                     else toggle(h.key);
                   }}
                   disabled={locked}
+                  {...(h.key === 'prayer' ? { 'data-tour': 'habit-toggle-prayer' } : {})}
                 >
                   {done && '✓'}
                 </button>
@@ -226,7 +233,12 @@ export default function DailyCheckIn({
 
                 {/* Expand arrow (only for expandable) */}
                 {h.expandable && (
-                  <button className="cl-expand-btn" onClick={() => doExpand(h.key)} disabled={locked}>
+                  <button
+                    className="cl-expand-btn"
+                    onClick={() => doExpand(h.key)}
+                    disabled={locked}
+                    {...(h.key === 'prayer' ? { 'data-tour': 'habit-expand-prayer' } : {})}
+                  >
                     <span className={`cl-caret${isOpen ? ' open' : ''}`}>‹</span>
                   </button>
                 )}
@@ -305,7 +317,7 @@ export default function DailyCheckIn({
       <div className="cl-action">
         {dayState === 'approved'
           ? <span className="cl-action-empty" />
-          : <button className="cl-approve" onClick={submitDay}>تأكيد الإنجاز</button>
+          : <button className="cl-approve" onClick={submitDay} data-tour="submit-button">تأكيد الإنجاز</button>
         }
       </div>
 

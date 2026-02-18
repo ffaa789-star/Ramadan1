@@ -11,7 +11,7 @@ export default function BottomNav() {
         <span className="bottom-nav-label">اليومية</span>
       </NavLink>
 
-      <NavLink to="/report" className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}>
+      <NavLink to="/report" className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`} data-tour="nav-reports">
         <span className="bottom-nav-icon">📊</span>
         <span className="bottom-nav-label">التقارير</span>
       </NavLink>
