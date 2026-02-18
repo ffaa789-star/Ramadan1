@@ -1114,79 +1114,148 @@ body {
 }
 
 /* ================================================================
-   ONBOARDING — calm, reflective
+   ONBOARDING (ob-* prefix) — calm, spacious, elderly-friendly
    ================================================================ */
-.onboarding {
+.ob {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 75vh;
-  padding: 0 8px;
-}
-
-.onboarding-card {
   text-align: center;
-  width: 100%;
-  max-width: 340px;
+  min-height: 90dvh;
+  padding: 48px 16px 32px;
+  justify-content: center;
 }
 
-.onboarding-moon {
-  font-size: 3.5rem;
+.ob-moon {
+  font-size: 2.8rem;
+  line-height: 1;
   margin-bottom: 20px;
+}
+
+.ob-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.ob-subtitle {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin: 0 0 28px;
+  max-width: 320px;
+}
+
+/* ── Soft green card ── */
+.ob-card {
+  background: linear-gradient(160deg, #f3f9ee 0%, #e8f0e0 100%);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  margin-bottom: 28px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.ob-desc {
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.9;
+  margin: 0 0 18px;
+}
+
+/* ── Feature pills ── */
+.ob-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.ob-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.ob-pill-icon {
+  font-size: 1rem;
   line-height: 1;
 }
 
-.onboarding-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
-}
-
-.onboarding-tagline {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-text);
-  line-height: 1.7;
-  margin-bottom: 8px;
-}
-
-.onboarding-desc {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  line-height: 1.6;
+/* ── Value propositions ── */
+.ob-values {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
   margin-bottom: 32px;
 }
 
-.onboarding-cta {
+.ob-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ob-value-icon {
+  font-size: 1.1rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ob-value-text {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* ── CTA button ── */
+.ob-cta {
   display: block;
   width: 100%;
-  max-width: 240px;
-  margin: 0 auto 24px;
-  padding: 12px 24px;
+  max-width: 300px;
+  padding: 14px 24px;
   border: none;
   border-radius: var(--radius-md);
   background: var(--color-primary);
   color: white;
   font-family: var(--font-primary);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px rgba(45, 80, 22, 0.2);
+  margin-bottom: 16px;
 }
 
-.onboarding-cta:hover {
+.ob-cta:hover {
   background: var(--color-primary-light);
+  box-shadow: 0 6px 20px rgba(45, 80, 22, 0.28);
 }
 
-.onboarding-cta:active {
+.ob-cta:active {
   transform: scale(0.98);
 }
 
-.onboarding-privacy {
-  font-size: 0.7rem;
+/* ── Privacy note ── */
+.ob-privacy {
+  font-size: 0.75rem;
   color: var(--color-text-muted);
   font-weight: 300;
   line-height: 1.6;
