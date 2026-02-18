@@ -5,21 +5,19 @@ import BottomNav from './components/BottomNav';
 import OnboardingPage from './pages/OnboardingPage';
 import DailyPage from './pages/DailyPage';
 import ReportPage from './pages/ReportPage';
-import MorePage from './pages/MorePage';
 import AdminPage from './pages/AdminPage';
 import './App.css';
 
-const HIDE_SHELL_PATHS = ['/', '/onboarding', '/daily'];
+const ONBOARDING_PATHS = ['/', '/onboarding'];
 
 export default function App() {
   const location = useLocation();
-  const isOnboarding = location.pathname === '/' || location.pathname === '/onboarding';
-  const hideHeader = HIDE_SHELL_PATHS.includes(location.pathname);
+  const isOnboarding = ONBOARDING_PATHS.includes(location.pathname);
 
   return (
     <>
-      {/* Header — hidden on onboarding + daily (daily has its own header) */}
-      {!hideHeader && (
+      {/* Header — hidden on onboarding */}
+      {!isOnboarding && (
         <header className="app-header app-header-compact">
           <h1 className="app-title">رفيق رمضان</h1>
         </header>
@@ -30,7 +28,7 @@ export default function App() {
         <Route path="/" element={<OnboardingPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Main app pages */}
+        {/* Main app pages — only Daily + Reports */}
         <Route
           path="/daily"
           element={
@@ -44,14 +42,6 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ReportPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/more"
-          element={
-            <ProtectedRoute>
-              <MorePage />
             </ProtectedRoute>
           }
         />

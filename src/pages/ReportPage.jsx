@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { getTodayYMD, toArabicNumeral, buildHijriMonthDays, formatHijriMonthYear } from '../dateUtils';
 import Calendar from '../components/Calendar';
-import HabitTrackerGrid from '../components/HabitTrackerGrid';
 import useEntries from '../hooks/useEntries';
 
 const HABIT_KEYS = [
@@ -57,6 +56,15 @@ export default function ReportPage() {
     };
   }, [entries, monthDays]);
 
+  function shareWhatsApp() {
+    const text = `رفيق رمضان 🌙 — سجّل عباداتك اليومية بسهولة: ${window.location.origin}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.origin);
+  }
+
   if (loading) {
     return (
       <div className="loading-screen">
@@ -84,13 +92,6 @@ export default function ReportPage() {
           <span className="report-stat-label">يوم مسجّل</span>
         </div>
       </div>
-
-      {/* ── Habit Tracker Grid (moved from daily page) ── */}
-      <HabitTrackerGrid
-        entries={entries}
-        selectedDate={selectedDate}
-        onSelectDate={(ymd) => setSelectedDate(ymd)}
-      />
 
       <div className="card report-habits-card">
         <h3 className="report-section-title">نسبة الالتزام بالعادات</h3>
@@ -129,6 +130,25 @@ export default function ReportPage() {
         calendarAnchor={calendarAnchor}
         onChangeAnchor={setCalendarAnchor}
       />
+
+      {/* ── Share & About (merged from More page) ── */}
+      <div className="card report-share-card">
+        <h3 className="report-section-title">مشاركة</h3>
+        <div className="report-share-btns">
+          <button className="btn btn-whatsapp" onClick={shareWhatsApp}>مشاركة عبر واتساب</button>
+          <button className="btn btn-secondary" onClick={copyLink}>نسخ الرابط</button>
+        </div>
+      </div>
+
+      <div className="card report-about-card">
+        <h3 className="report-section-title">عن التطبيق</h3>
+        <p className="report-about-text">
+          رفيق رمضان — تطبيق لتتبع عباداتك اليومية في شهر رمضان المبارك.
+        </p>
+        <p className="report-about-text">
+          بياناتك محفوظة محليًا على جهازك فقط.
+        </p>
+      </div>
     </div>
   );
 }
