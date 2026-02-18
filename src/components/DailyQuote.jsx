@@ -44,12 +44,10 @@ export default function DailyQuote({ selectedDate }) {
   const quote = getQuoteForDate(selectedDate);
 
   return (
-    <div className="quote-banner">
-      <span className="quote-banner-icon">🌙</span>
-      <div className="quote-banner-body">
-        <div className="quote-banner-text">{quote.text}</div>
-        <div className="quote-banner-ref">{quote.ref}</div>
-      </div>
+    <div className="quote-card-big">
+      <div className="quote-big-moon">🌙</div>
+      <div className="quote-big-text">{quote.text}</div>
+      <div className="quote-big-ref">{quote.ref}</div>
     </div>
   );
 }
