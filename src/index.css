@@ -45,7 +45,7 @@ body {
   font-family: var(--font-primary);
   background-color: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.7;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
@@ -54,28 +54,7 @@ body {
 #root {
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 16px 80px;
-}
-
-/* ===== Header ===== */
-.app-header {
-  text-align: center;
-  padding: 20px 0 14px;
-}
-
-.app-header-compact {
-  padding: 10px 0 8px;
-}
-
-.app-header-compact .app-title {
-  font-size: 1.3rem;
-}
-
-.app-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: -0.5px;
+  padding: 0 12px 72px;
 }
 
 /* ===== Loading Screen ===== */
@@ -107,8 +86,8 @@ body {
 .card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
-  padding: 20px;
-  margin-bottom: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -228,12 +207,12 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border: 1.5px dashed var(--color-border);
   border-radius: var(--radius-md);
   background: transparent;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
   cursor: pointer;
   width: 100%;
@@ -247,18 +226,18 @@ body {
 
 .reflection-textarea {
   width: 100%;
-  min-height: 80px;
-  padding: 12px 16px;
+  min-height: 60px;
+  padding: 10px 14px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text);
   background: var(--color-bg);
   direction: rtl;
   outline: none;
   resize: vertical;
-  line-height: 1.8;
+  line-height: 1.7;
   transition: border-color 0.2s ease;
   animation: slideDown 0.25s ease;
 }
@@ -317,15 +296,15 @@ body {
 /* ===== Save Toast ===== */
 .save-toast {
   position: fixed;
-  bottom: 90px;
+  bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--color-primary);
   color: white;
-  padding: 8px 20px;
+  padding: 6px 18px;
   border-radius: var(--radius-full);
   font-family: var(--font-primary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   box-shadow: var(--shadow-md);
   z-index: 1000;
@@ -346,17 +325,17 @@ body {
 .btn-submit {
   display: block;
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border: none;
   border-radius: var(--radius-md);
   background: var(--color-primary);
   color: white;
   font-family: var(--font-primary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .btn-submit:hover {
@@ -376,27 +355,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: var(--radius-md);
   background: var(--color-primary-soft);
   border: 1.5px solid var(--color-primary);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .submitted-text {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-primary);
   line-height: 1.5;
 }
 
 .submitted-edit-btn {
-  padding: 4px 12px;
+  padding: 3px 10px;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-full);
   background: transparent;
   font-family: var(--font-primary);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: var(--color-primary);
   cursor: pointer;
@@ -424,12 +403,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  padding-top: 6px;
 }
 
 .ck-arrow {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: var(--color-surface);
   border-radius: 50%;
@@ -437,7 +417,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
   box-shadow: var(--shadow-sm);
   transition: all 0.15s ease;
@@ -457,7 +437,7 @@ body {
 }
 
 .ck-date-text {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
@@ -471,7 +451,7 @@ body {
   border-radius: var(--radius-full);
   background: var(--color-accent-light);
   font-family: var(--font-primary);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 500;
   color: var(--color-accent);
   cursor: pointer;
@@ -479,85 +459,23 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Streak dots row ── */
-.ck-streak-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.ck-streak-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.ck-dot {
-  width: 28px;
-  height: 28px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-family: var(--font-primary);
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-  transition: all 0.15s ease;
-}
-
-.ck-dot.done {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
-}
-
-.ck-dot.today {
-  border-color: var(--color-accent);
-  border-width: 2px;
-}
-
-.ck-dot.sel {
-  box-shadow: 0 0 0 2px var(--color-primary);
-}
-
-.ck-dot-num {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1;
-}
-
-.ck-dot.done .ck-dot-num {
-  color: var(--color-primary);
-}
-
-.ck-streak-count {
-  font-size: 0.68rem;
+/* ── Streak text ── */
+.ck-streak-text {
+  text-align: center;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--color-primary);
-  white-space: nowrap;
+  margin-bottom: 4px;
 }
 
 /* ── Checklist card ── */
 .ck-card {
-  padding: 10px 12px !important;
-  margin-bottom: 8px !important;
+  padding: 8px 10px !important;
+  margin-bottom: 6px !important;
 }
 
 .ck-item-wrap + .ck-item-wrap {
   border-top: 1px solid var(--color-border);
-}
-
-/* Auto-sort transition */
-.ck-item-wrap {
-  transition: opacity 0.2s ease;
-}
-
-.ck-item-done {
-  opacity: 0.7;
 }
 
 /* ── Main checkbox row ── */
@@ -565,7 +483,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 4px;
+  padding: 7px 4px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -579,15 +497,15 @@ body {
 
 /* ── Checkbox square ── */
 .ck-check {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border: 2px solid var(--color-border);
   border-radius: 6px;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: transparent;
   transition: all 0.15s ease;
@@ -602,14 +520,14 @@ body {
 }
 
 .ck-icon {
-  font-size: 1rem;
-  width: 22px;
+  font-size: 0.95rem;
+  width: 20px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .ck-name {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--color-text);
   flex: 1;
@@ -617,7 +535,7 @@ body {
 }
 
 .ck-sub-count {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 400;
   color: var(--color-text-muted);
 }
@@ -645,7 +563,7 @@ body {
 
 /* ── Expansion area ── */
 .ck-expand {
-  padding: 4px 0 6px 32px;
+  padding: 2px 0 4px 30px;
   animation: slideDown 0.2s ease;
 }
 
@@ -654,7 +572,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -672,15 +590,15 @@ body {
 }
 
 .ck-mini-check {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   border: 1.5px solid var(--color-border);
   border-radius: 4px;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 700;
   color: transparent;
   transition: all 0.15s ease;
@@ -695,10 +613,10 @@ body {
 }
 
 .ck-prayer-name {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--color-text);
-  min-width: 36px;
+  min-width: 34px;
 }
 
 .ck-chips {
@@ -710,12 +628,12 @@ body {
 
 /* ── Pill chip ── */
 .ck-chip {
-  padding: 2px 8px;
+  padding: 2px 7px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   font-family: var(--font-primary);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -738,12 +656,12 @@ body {
 }
 
 .ck-chip-lg {
-  padding: 4px 10px;
-  font-size: 0.7rem;
+  padding: 3px 9px;
+  font-size: 0.68rem;
 }
 
 .ck-chip-tick {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
 }
 
 /* ── Adhkar sub row ── */
@@ -755,14 +673,14 @@ body {
 
 /* ── Compact progress ── */
 .ck-progress {
-  margin-top: 10px;
-  padding-top: 8px;
+  margin-top: 8px;
+  padding-top: 6px;
   border-top: 1px solid var(--color-border);
 }
 
 .ck-progress-track {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background: var(--color-toggle-off);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -778,8 +696,8 @@ body {
 .ck-progress-txt {
   display: block;
   text-align: center;
-  margin-top: 4px;
-  font-size: 0.72rem;
+  margin-top: 3px;
+  font-size: 0.68rem;
   color: var(--color-text-muted);
   font-weight: 300;
 }
@@ -788,18 +706,18 @@ body {
 .ck-footer {
   display: flex;
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 6px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .ck-footer-btn {
-  padding: 6px 10px;
+  padding: 5px 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   font-family: var(--font-primary);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -823,12 +741,84 @@ body {
   background: #fdf0ef;
 }
 
+/* ===== Daily Quote — Collapsible Compact ===== */
+.quote-card-compact {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: padding 0.2s ease;
+}
+
+.quote-card-compact::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+}
+
+.quote-collapsed-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quote-collapsed-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.quote-collapsed-text {
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+}
+
+.quote-expanded .quote-collapsed-row {
+  align-items: flex-start;
+}
+
+.quote-expanded {
+  padding: 14px 16px;
+}
+
+.quote-full {
+  flex: 1;
+}
+
+.quote-full .quote-text {
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.8;
+  margin-bottom: 4px;
+}
+
+.quote-full .quote-reference {
+  font-size: 0.7rem;
+  opacity: 0.65;
+  font-weight: 300;
+}
+
 /* ===== Calendar ===== */
 .calendar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .calendar-month-info {
@@ -836,14 +826,14 @@ body {
 }
 
 .calendar-month-hijri {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.3;
 }
 
 .calendar-month-gregorian {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 400;
   color: var(--color-text-muted);
   margin-top: 2px;
@@ -851,12 +841,12 @@ body {
 
 .calendar-nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .calendar-nav-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
   background: var(--color-bg);
   border-radius: 50%;
@@ -864,7 +854,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
   transition: all 0.2s ease;
 }
@@ -877,22 +867,22 @@ body {
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 8px;
+  gap: 3px;
+  margin-bottom: 6px;
 }
 
 .calendar-weekday {
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-text-muted);
-  padding: 4px 0;
+  padding: 3px 0;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
 
 .calendar-day {
@@ -906,11 +896,11 @@ body {
   justify-content: center;
   cursor: pointer;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text);
   transition: all 0.2s ease;
   position: relative;
-  padding: 4px 2px;
+  padding: 3px 2px;
 }
 
 .calendar-day:hover {
@@ -942,7 +932,7 @@ body {
 }
 
 .calendar-day-hijri-num {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 1px;
@@ -950,7 +940,7 @@ body {
 }
 
 .calendar-day-greg {
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   font-weight: 400;
   color: var(--color-text-muted);
   line-height: 1;
@@ -985,7 +975,7 @@ body {
 }
 
 .ramadan-tag {
-  font-size: 0.38rem;
+  font-size: 0.36rem;
   font-weight: 600;
   color: var(--color-ramadan-tag);
   line-height: 1;
@@ -1002,19 +992,19 @@ body {
 }
 
 .calendar-day-dot {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
   background: var(--color-primary);
 }
 
 .calendar-day-progress {
   position: absolute;
-  bottom: 3px;
+  bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
   width: 65%;
-  height: 2.5px;
+  height: 2px;
   background: var(--color-toggle-off);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -1028,14 +1018,14 @@ body {
 
 .jump-today-btn {
   display: block;
-  margin: 12px auto 0;
-  padding: 8px 20px;
+  margin: 8px auto 0;
+  padding: 6px 18px;
   border: none;
   background: var(--color-primary-soft);
   color: var(--color-primary);
   border-radius: var(--radius-full);
   font-family: var(--font-primary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1069,7 +1059,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px 10px;
+  padding: 6px 4px 8px;
   text-decoration: none;
   color: var(--color-text-muted);
   font-family: var(--font-primary);
@@ -1082,105 +1072,109 @@ body {
 }
 
 .bottom-nav-icon {
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1;
   margin-bottom: 2px;
   position: relative;
 }
 
 .bottom-nav-label {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 500;
 }
 
 /* ================================================================
-   ONBOARDING
+   ONBOARDING — calm, reflective
    ================================================================ */
 .onboarding {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 75vh;
+  padding: 0 8px;
 }
 
 .onboarding-card {
   text-align: center;
   width: 100%;
+  max-width: 340px;
 }
 
-.onboarding-icon {
-  font-size: 3rem;
-  margin-bottom: 12px;
+.onboarding-moon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  line-height: 1;
 }
 
 .onboarding-title {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 4px;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
-.onboarding-subtitle {
-  font-size: 0.85rem;
+.onboarding-tagline {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.onboarding-desc {
+  font-size: 0.82rem;
   color: var(--color-text-muted);
+  line-height: 1.6;
   margin-bottom: 32px;
 }
 
-.onboarding-features {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.onboarding-feature {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--color-surface);
+.onboarding-cta {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  margin: 0 auto 24px;
+  padding: 12px 24px;
+  border: none;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
 }
 
-.onboarding-feature-icon {
-  font-size: 1.2rem;
-  width: 28px;
-  text-align: center;
-  flex-shrink: 0;
+.onboarding-cta:hover {
+  background: var(--color-primary-light);
 }
 
-.onboarding-feature-text {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text);
+.onboarding-cta:active {
+  transform: scale(0.98);
 }
 
-.onboarding-btn {
-  margin-top: 8px;
-}
-
-.onboarding-note {
-  margin-top: 20px;
+.onboarding-privacy {
   font-size: 0.7rem;
   color: var(--color-text-muted);
   font-weight: 300;
+  line-height: 1.6;
 }
 
 /* ================================================================
    HABIT TRACKER GRID
    ================================================================ */
 .habit-grid-wrap {
-  margin-top: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .habit-grid-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .habit-grid-scroll {
@@ -1198,9 +1192,9 @@ body {
 
 .habit-grid th,
 .habit-grid td {
-  padding: 6px 4px;
+  padding: 5px 3px;
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   white-space: nowrap;
   border-bottom: 1px solid var(--color-border);
 }
@@ -1210,7 +1204,7 @@ body {
   right: 0;
   background: var(--color-surface);
   z-index: 2;
-  min-width: 70px;
+  min-width: 64px;
 }
 
 .habit-grid-label {
@@ -1219,12 +1213,12 @@ body {
   background: var(--color-surface);
   z-index: 1;
   text-align: right !important;
-  padding-right: 8px !important;
-  min-width: 70px;
+  padding-right: 6px !important;
+  min-width: 64px;
 }
 
 .habit-grid-icon {
-  margin-left: 4px;
+  margin-left: 3px;
 }
 
 .habit-grid-name {
@@ -1236,7 +1230,7 @@ body {
   font-weight: 600;
   color: var(--color-text-muted);
   cursor: pointer;
-  min-width: 28px;
+  min-width: 24px;
 }
 
 .habit-grid-day-header.today {
@@ -1252,7 +1246,7 @@ body {
 .habit-grid-cell {
   cursor: pointer;
   color: transparent;
-  min-width: 28px;
+  min-width: 24px;
 }
 
 .habit-grid-cell.done {
@@ -1273,31 +1267,31 @@ body {
 }
 
 .report-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-primary);
   text-align: center;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .report-summary {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .report-stat-card {
   flex: 1;
   background: var(--color-surface);
   border-radius: var(--radius-md);
-  padding: 12px 8px;
+  padding: 10px 6px;
   text-align: center;
   box-shadow: var(--shadow-sm);
 }
 
 .report-stat-num {
   display: block;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.2;
@@ -1305,41 +1299,41 @@ body {
 
 .report-stat-label {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 400;
   color: var(--color-text-muted);
   margin-top: 2px;
 }
 
 .report-habits-card {
-  padding: 16px;
+  padding: 12px;
 }
 
 .report-section-title {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .report-habit-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 7px;
 }
 
 .report-habit-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-text);
-  min-width: 65px;
+  min-width: 60px;
   white-space: nowrap;
 }
 
 .report-habit-bar-track {
   flex: 1;
-  height: 8px;
+  height: 7px;
   background: var(--color-toggle-off);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -1353,22 +1347,22 @@ body {
 }
 
 .report-habit-pct {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-primary);
-  min-width: 32px;
+  min-width: 28px;
   text-align: left;
 }
 
 .report-insights-card {
-  padding: 16px;
+  padding: 12px;
 }
 
 .report-insight {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
-  margin-bottom: 6px;
-  line-height: 1.6;
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 
 .report-insight strong {
@@ -1379,7 +1373,7 @@ body {
    REPORT SHARE + ABOUT (merged from More page)
    ================================================================ */
 .report-share-card {
-  padding: 16px;
+  padding: 12px;
 }
 
 .report-share-btns {
@@ -1388,13 +1382,13 @@ body {
 }
 
 .report-about-card {
-  padding: 16px;
+  padding: 12px;
 }
 
 .report-about-text {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 4px;
 }
 
@@ -1406,27 +1400,27 @@ body {
 }
 
 .admin-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-primary);
   text-align: center;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .admin-filters {
   display: flex;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
 .admin-filter-btn {
-  padding: 6px 12px;
+  padding: 5px 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   font-family: var(--font-primary);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -1440,26 +1434,26 @@ body {
 }
 
 .admin-users-card {
-  padding: 12px;
+  padding: 10px;
   overflow-x: auto;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
 .admin-table th {
   font-weight: 600;
   color: var(--color-text-muted);
-  padding: 6px 8px;
+  padding: 5px 6px;
   text-align: right;
   border-bottom: 1px solid var(--color-border);
 }
 
 .admin-table td {
-  padding: 8px;
+  padding: 6px;
   color: var(--color-text);
   border-bottom: 1px solid var(--color-border);
 }
@@ -1467,25 +1461,25 @@ body {
 .admin-empty {
   text-align: center;
   color: var(--color-text-muted);
-  font-size: 0.8rem;
-  padding: 16px 0;
+  font-size: 0.78rem;
+  padding: 14px 0;
 }
 
 .admin-notif-card {
-  padding: 16px;
+  padding: 14px;
 }
 
 .admin-input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text);
   background: var(--color-surface);
   outline: none;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   transition: border-color 0.2s ease;
 }
 
@@ -1495,17 +1489,17 @@ body {
 
 .admin-textarea {
   width: 100%;
-  min-height: 60px;
-  padding: 10px 12px;
+  min-height: 50px;
+  padding: 8px 10px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text);
   background: var(--color-surface);
   outline: none;
   resize: vertical;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   transition: border-color 0.2s ease;
 }
 
@@ -1521,11 +1515,11 @@ body {
 
 .admin-select {
   flex: 1;
-  padding: 8px 12px;
+  padding: 7px 10px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   font-family: var(--font-primary);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--color-text);
   background: var(--color-surface);
   outline: none;
@@ -1543,7 +1537,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 0;
   position: relative;
   line-height: 1;
@@ -1555,10 +1549,10 @@ body {
   right: -6px;
   background: var(--color-danger);
   color: white;
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   font-weight: 700;
-  min-width: 14px;
-  height: 14px;
+  min-width: 13px;
+  height: 13px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1572,7 +1566,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 260px;
-  max-height: 320px;
+  max-height: 300px;
   background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -1587,9 +1581,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--color-border);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -1598,26 +1592,26 @@ body {
   background: none;
   border: none;
   font-family: var(--font-primary);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--color-primary);
   cursor: pointer;
   font-weight: 500;
 }
 
 .notif-empty {
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
 .notif-list {
-  max-height: 260px;
+  max-height: 240px;
   overflow-y: auto;
 }
 
 .notif-item {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
   transition: background 0.15s ease;
@@ -1636,114 +1630,43 @@ body {
 }
 
 .notif-title {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: 2px;
 }
 
 .notif-body {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
-}
-
-/* ===== Daily Quote ===== */
-.quote-card {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: white;
-  border-radius: var(--radius-lg);
-  padding: 18px 16px;
-  margin-bottom: 14px;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.quote-card::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-}
-
-.quote-card::after {
-  content: '';
-  position: absolute;
-  bottom: -30px;
-  right: -30px;
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 50%;
-}
-
-.quote-icon {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-  opacity: 0.8;
-}
-
-.quote-text {
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.8;
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
-}
-
-.quote-reference {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  font-weight: 300;
-  position: relative;
-  z-index: 1;
+  line-height: 1.4;
 }
 
 /* ===== Responsive ===== */
 @media (max-width: 400px) {
   #root {
-    padding: 0 12px 80px;
-  }
-
-  .app-title {
-    font-size: 1.5rem;
-  }
-
-  .calendar-day {
-    font-size: 0.75rem;
-  }
-
-  .calendar-day-hijri-num {
-    font-size: 0.75rem;
+    padding: 0 10px 72px;
   }
 
   .ck-date-text {
-    font-size: 0.75rem;
-  }
-
-  .ck-dot {
-    width: 24px;
-    height: 24px;
-  }
-
-  .ck-dot-num {
-    font-size: 0.58rem;
+    font-size: 0.72rem;
   }
 
   .ck-check {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 
   .ck-chip {
     padding: 2px 6px;
-    font-size: 0.55rem;
+    font-size: 0.52rem;
+  }
+
+  .calendar-day {
+    font-size: 0.72rem;
+  }
+
+  .calendar-day-hijri-num {
+    font-size: 0.72rem;
   }
 }

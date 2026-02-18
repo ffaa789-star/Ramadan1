@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { getTodayYMD, toArabicNumeral, buildHijriMonthDays, formatHijriMonthYear } from '../dateUtils';
 import Calendar from '../components/Calendar';
+import HabitTrackerGrid from '../components/HabitTrackerGrid';
 import useEntries from '../hooks/useEntries';
 
 const HABIT_KEYS = [
@@ -113,7 +114,7 @@ export default function ReportPage() {
             {stats.strongest.icon} أقوى عادة: <strong>{stats.strongest.name}</strong> ({toArabicNumeral(stats.strongest.pct)}%)
           </p>
         )}
-        {stats.weakest && stats.daysTracked > 0 && (
+        {stats.weakest && stats.daysTracked > 0 && stats.weakest.pct < 100 && (
           <p className="report-insight">
             {stats.weakest.icon} تحتاج تعزيز: <strong>{stats.weakest.name}</strong> ({toArabicNumeral(stats.weakest.pct)}%)
           </p>
@@ -122,6 +123,13 @@ export default function ReportPage() {
           <p className="report-insight">لا توجد بيانات لهذا الشهر بعد.</p>
         )}
       </div>
+
+      {/* ── Horizontal month tracker grid ── */}
+      <HabitTrackerGrid
+        entries={entries}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+      />
 
       <Calendar
         entries={entries}

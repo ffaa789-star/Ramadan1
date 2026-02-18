@@ -3,9 +3,7 @@ import {
   addDaysYMD,
   getTodayYMD,
   formatHijriFromYMD,
-  formatHijriDayOnly,
   toArabicNumeral,
-  parseYMDToLocalNoon,
 } from '../dateUtils';
 
 const INDIVIDUAL_PRAYERS = [
@@ -42,11 +40,6 @@ const PROGRESS_MESSAGES = [
 ];
 
 const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
-const WEEKDAY_INITIALS = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
-
-function allPrayersDone(prayers) {
-  return prayers && INDIVIDUAL_PRAYERS.every((p) => prayers[p.key]);
-}
 
 export default function DailyCheckIn({
   entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay,
@@ -85,64 +78,34 @@ export default function DailyCheckIn({
     return () => clearTimeout(timer);
   }, [entry]);
 
-  /* ── Streak data ── */
-  const streakData = useMemo(() => {
-    const todayYmd = getTodayYMD();
-    const boxes = [];
-    for (let i = -3; i <= 1; i++) {
-      const ymd = addDaysYMD(selectedDate, i);
-      const dt = parseYMDToLocalNoon(ymd);
-      const hijriDay = formatHijriDayOnly(ymd);
-      const weekdayIdx = dt.getDay();
-      const dayEntry = entries[ymd];
-      boxes.push({
-        ymd,
-        hijriDay,
-        weekdayInitial: WEEKDAY_INITIALS[weekdayIdx],
-        submitted: dayEntry?.submitted || false,
-        isTodayBox: ymd === todayYmd,
-        isSelected: i === 0,
-      });
-    }
+  /* ── Streak count (no boxes/strip) ── */
+  const streakCount = useMemo(() => {
     let streak = 0;
     let cur = selectedDate;
     for (let i = 0; i < 365; i++) {
       if (entries[cur]?.submitted) { streak++; cur = addDaysYMD(cur, -1); }
       else break;
     }
-    return { boxes, streak };
+    return streak;
   }, [selectedDate, entries]);
 
-  /* ── Sorted habits: uncompleted first, completed slide down ── */
-  const sortedHabits = useMemo(() => {
-    return [...HABITS].sort((a, b) => {
-      const aDone = !!entry[a.key];
-      const bDone = !!entry[b.key];
-      if (aDone === bDone) return 0;
-      return aDone ? 1 : -1;
-    });
-  }, [entry]);
-
   /* ── Action handlers ── */
+
+  // Parent prayer toggles independently — does NOT wipe subs
   function togglePrayerMain() {
-    const allDone = allPrayersDone(prayers);
-    const newVal = !allDone;
-    const newPrayers = {};
-    const newDetails = { ...prayerDetails };
-    INDIVIDUAL_PRAYERS.forEach((p) => {
-      newPrayers[p.key] = newVal;
-      if (!newVal) newDetails[p.key] = { jamaa: false, nafila: false };
-    });
-    onUpdate({ ...entry, prayer: newVal, prayers: newPrayers, prayerDetails: newDetails });
-    if (!allDone) setPrayerExpanded(false);
+    const newVal = !entry.prayer;
+    onUpdate({ ...entry, prayer: newVal });
   }
 
+  // Toggling a sub prayer ON also turns parent ON. Toggling OFF does NOT turn parent OFF.
   function toggleIndividualPrayer(prayerKey) {
     const newPrayers = { ...prayers, [prayerKey]: !prayers[prayerKey] };
     const newDetails = { ...prayerDetails };
     if (!newPrayers[prayerKey]) newDetails[prayerKey] = { jamaa: false, nafila: false };
-    const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
-    onUpdate({ ...entry, prayer: allDone, prayers: newPrayers, prayerDetails: newDetails });
+    const updated = { ...entry, prayers: newPrayers, prayerDetails: newDetails };
+    // If turning ON a sub, ensure parent is ON
+    if (newPrayers[prayerKey]) updated.prayer = true;
+    onUpdate(updated);
   }
 
   function togglePrayerSub(prayerKey, subKey) {
@@ -152,20 +115,31 @@ export default function DailyCheckIn({
     const newDetails = { ...prayerDetails, [prayerKey]: { ...oldSub, [subKey]: newSubVal } };
     const newPrayers = { ...prayers };
     if (newSubVal && !newPrayers[prayerKey]) newPrayers[prayerKey] = true;
-    const allDone = INDIVIDUAL_PRAYERS.every((p) => newPrayers[p.key]);
-    onUpdate({ ...entry, prayer: allDone, prayers: newPrayers, prayerDetails: newDetails });
+    const updated = { ...entry, prayers: newPrayers, prayerDetails: newDetails };
+    // If turning ON a sub-sub, ensure parent is ON
+    if (newSubVal) updated.prayer = true;
+    onUpdate(updated);
   }
 
+  // Parent adhkar toggles independently — does NOT wipe subs
+  function toggleAdhkarParent() {
+    const newVal = !entry.dhikr;
+    onUpdate({ ...entry, dhikr: newVal });
+  }
+
+  // Toggling a sub adhkar ON also turns parent ON. Toggling OFF does NOT turn parent OFF.
   function toggleAdhkarSub(subKey) {
     const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
-    const parentDone = ADHKAR_SUBS.some((s) => newAdhkar[s.key]);
-    onUpdate({ ...entry, dhikr: parentDone, adhkarDetails: newAdhkar });
+    const updated = { ...entry, adhkarDetails: newAdhkar };
+    // If turning ON a sub, ensure parent is ON
+    if (newAdhkar[subKey]) updated.dhikr = true;
+    onUpdate(updated);
   }
 
   function toggleHabit(key) {
     const updated = { ...entry, [key]: !entry[key] };
     if (key === 'quran' && !updated.quran) { updated.quranPages = null; setQuranExpanded(false); }
-    if (key === 'dhikr' && !updated.dhikr) { updated.adhkarDetails = { morning: false, evening: false, duaa: false }; setAdhkarExpanded(false); }
+    // dhikr parent toggle is handled by toggleAdhkarParent — do NOT wipe subs
     onUpdate(updated);
   }
 
@@ -218,34 +192,22 @@ export default function DailyCheckIn({
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}>←</button>
       </div>
 
-      {/* ── Streak dots row ── */}
-      <div className="ck-streak-row">
-        <div className="ck-streak-dots">
-          {streakData.boxes.map((box) => (
-            <button
-              key={box.ymd}
-              className={`ck-dot${box.submitted ? ' done' : ''}${box.isTodayBox ? ' today' : ''}${box.isSelected ? ' sel' : ''}`}
-              onClick={() => onNavigateDate(box.ymd)}
-              title={box.hijriDay}
-            >
-              <span className="ck-dot-num">{box.hijriDay}</span>
-            </button>
-          ))}
+      {/* ── Streak text (no strip/dots) ── */}
+      {streakCount > 0 && (
+        <div className="ck-streak-text">
+          🔥 {toArabicNumeral(streakCount)} يوم متتابع
         </div>
-        {streakData.streak > 0 && (
-          <span className="ck-streak-count">🔥 {toArabicNumeral(streakData.streak)}</span>
-        )}
-      </div>
+      )}
 
-      {/* ── Checklist card with auto-sort ── */}
+      {/* ── Checklist card — fixed order (HABITS array, no sorting) ── */}
       <div className={`card ck-card${isSubmitted ? ' card-submitted' : ''}`}>
-        {sortedHabits.map((habit) => {
+        {HABITS.map((habit) => {
           const done = !!entry[habit.key];
           const expandable = isExpandable(habit.key);
           const expanded = isExpanded(habit.key);
 
           return (
-            <div key={habit.key} className={`ck-item-wrap${done ? ' ck-item-done' : ''}`}>
+            <div key={habit.key} className="ck-item-wrap">
               {/* Main row */}
               <div
                 className={`ck-row${done ? ' done' : ''}`}
@@ -259,6 +221,7 @@ export default function DailyCheckIn({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (habit.key === 'prayer') togglePrayerMain();
+                    else if (habit.key === 'dhikr') toggleAdhkarParent();
                     else toggleHabit(habit.key);
                   }}
                 >
