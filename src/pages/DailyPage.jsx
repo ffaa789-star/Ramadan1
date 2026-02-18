@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getTodayYMD } from '../dateUtils';
 import DailyCheckIn from '../components/DailyCheckIn';
 import DailyQuote from '../components/DailyQuote';
@@ -8,7 +7,6 @@ import useEntries from '../hooks/useEntries';
 export default function DailyPage() {
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
   const { entries, getEntry, updateEntry, clearEntry, loading } = useEntries();
-  const navigate = useNavigate();
 
   const currentEntry = getEntry(selectedDate);
   const isToday = selectedDate === getTodayYMD();
@@ -36,16 +34,9 @@ export default function DailyPage() {
 
   return (
     <div className="daily-page">
-      {/* ── Page header ── */}
+      {/* ── Page title ── */}
       <div className="daily-header">
-        <h1 className="daily-header-title">رفيق رمضان</h1>
-        <p className="daily-header-subtitle">رفيقك في رمضان</p>
-      </div>
-
-      {/* ── Segmented tab control ── */}
-      <div className="seg-tabs">
-        <button className="seg-tab active">بطاقة المتابعة اليومية</button>
-        <button className="seg-tab" onClick={() => navigate('/report')}>عرض التقويم الشهري</button>
+        <h1 className="daily-header-title">بطاقة المتابعة اليومية</h1>
       </div>
 
       {/* ── Daily quote (big green card) ── */}
