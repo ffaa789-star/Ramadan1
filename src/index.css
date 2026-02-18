@@ -94,11 +94,11 @@ body {
 /* ===== Donation Direct Link ===== */
 .donate-link {
   font-family: var(--font-primary);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-primary);
   text-decoration: none;
-  padding: 2px 8px;
+  padding: 4px 10px;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-full);
   white-space: nowrap;
@@ -325,17 +325,17 @@ body {
 .btn-submit {
   display: block;
   width: 100%;
-  padding: 10px 16px;
+  padding: 14px 16px;
   border: none;
   border-radius: var(--radius-md);
   background: var(--color-primary);
   color: white;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .btn-submit:hover {
@@ -363,19 +363,19 @@ body {
 }
 
 .submitted-text {
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--color-primary);
   line-height: 1.5;
 }
 
 .submitted-edit-btn {
-  padding: 3px 10px;
+  padding: 5px 14px;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-full);
   background: transparent;
   font-family: var(--font-primary);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--color-primary);
   cursor: pointer;
@@ -402,14 +402,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 4px;
-  padding-top: 6px;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding-top: 8px;
 }
 
 .ck-arrow {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border: none;
   background: var(--color-surface);
   border-radius: 50%;
@@ -417,7 +417,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--color-text-secondary);
   box-shadow: var(--shadow-sm);
   transition: all 0.15s ease;
@@ -437,7 +437,7 @@ body {
 }
 
 .ck-date-text {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
@@ -446,12 +446,12 @@ body {
 }
 
 .ck-today-btn {
-  padding: 2px 8px;
+  padding: 4px 12px;
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-full);
   background: var(--color-accent-light);
   font-family: var(--font-primary);
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-accent);
   cursor: pointer;
@@ -462,28 +462,29 @@ body {
 /* ── Streak text ── */
 .ck-streak-text {
   text-align: center;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-primary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 /* ── Checklist card ── */
 .ck-card {
-  padding: 8px 10px !important;
-  margin-bottom: 6px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 8px !important;
 }
 
 .ck-item-wrap + .ck-item-wrap {
   border-top: 1px solid var(--color-border);
 }
 
-/* ── Main checkbox row ── */
+/* ── Main checkbox row — large tap targets ── */
 .ck-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 4px;
+  gap: 10px;
+  padding: 12px 6px;
+  min-height: 56px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -492,20 +493,20 @@ body {
 }
 
 .ck-row:active {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(0, 0, 0, 0.03);
 }
 
-/* ── Checkbox square ── */
+/* ── Checkbox square — bigger ── */
 .ck-check {
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--color-border);
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid var(--color-border);
+  border-radius: 8px;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: transparent;
   transition: all 0.15s ease;
@@ -520,22 +521,22 @@ body {
 }
 
 .ck-icon {
-  font-size: 0.95rem;
-  width: 20px;
+  font-size: 1.2rem;
+  width: 24px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .ck-name {
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--color-text);
   flex: 1;
   min-width: 0;
 }
 
 .ck-sub-count {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 400;
   color: var(--color-text-muted);
 }
@@ -550,7 +551,7 @@ body {
 }
 
 .ck-chevron {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--color-text-muted);
   transition: transform 0.2s ease;
   display: inline-block;
@@ -567,13 +568,14 @@ body {
   animation: slideDown 0.2s ease;
 }
 
-/* ── Prayer sub-row ── */
+/* ── Prayer sub-row — larger tap targets ── */
 .ck-prayer-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 6px;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 42px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s ease;
   user-select: none;
@@ -581,24 +583,24 @@ body {
 }
 
 .ck-prayer-row:active {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .ck-prayer-row.done {
   background: var(--color-primary-soft);
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .ck-mini-check {
-  width: 17px;
-  height: 17px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-border);
+  border-radius: 6px;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: transparent;
   transition: all 0.15s ease;
@@ -613,10 +615,10 @@ body {
 }
 
 .ck-prayer-name {
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--color-text);
-  min-width: 34px;
+  min-width: 38px;
 }
 
 .ck-chips {
@@ -626,14 +628,14 @@ body {
   margin-left: 0;
 }
 
-/* ── Pill chip ── */
+/* ── Pill chip — bigger for easy tapping ── */
 .ck-chip {
-  padding: 2px 7px;
+  padding: 5px 10px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
   font-family: var(--font-primary);
-  font-size: 0.58rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -656,12 +658,12 @@ body {
 }
 
 .ck-chip-lg {
-  padding: 3px 9px;
-  font-size: 0.68rem;
+  padding: 6px 12px;
+  font-size: 0.78rem;
 }
 
 .ck-chip-tick {
-  font-size: 0.58rem;
+  font-size: 0.68rem;
 }
 
 /* ── Adhkar sub row ── */
@@ -696,10 +698,10 @@ body {
 .ck-progress-txt {
   display: block;
   text-align: center;
-  margin-top: 3px;
-  font-size: 0.68rem;
+  margin-top: 4px;
+  font-size: 0.78rem;
   color: var(--color-text-muted);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 /* ── Footer row ── */
@@ -1649,17 +1651,21 @@ body {
   }
 
   .ck-date-text {
-    font-size: 0.72rem;
+    font-size: 0.85rem;
   }
 
   .ck-check {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .ck-name {
+    font-size: 0.92rem;
   }
 
   .ck-chip {
-    padding: 2px 6px;
-    font-size: 0.52rem;
+    padding: 4px 8px;
+    font-size: 0.65rem;
   }
 
   .calendar-day {

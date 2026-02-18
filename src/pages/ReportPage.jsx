@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { getTodayYMD, toArabicNumeral, buildHijriMonthDays, formatHijriMonthYear } from '../dateUtils';
-import Calendar from '../components/Calendar';
 import HabitTrackerGrid from '../components/HabitTrackerGrid';
 import useEntries from '../hooks/useEntries';
 
@@ -15,10 +14,9 @@ const HABIT_KEYS = [
 
 export default function ReportPage() {
   const { entries, loading } = useEntries();
-  const [calendarAnchor, setCalendarAnchor] = useState(getTodayYMD);
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
 
-  const monthDays = useMemo(() => buildHijriMonthDays(calendarAnchor), [calendarAnchor]);
+  const monthDays = useMemo(() => buildHijriMonthDays(selectedDate), [selectedDate]);
   const monthTitle = formatHijriMonthYear(monthDays[0]);
 
   const stats = useMemo(() => {
@@ -124,19 +122,11 @@ export default function ReportPage() {
         )}
       </div>
 
-      {/* ── Horizontal month tracker grid ── */}
+      {/* ── Horizontal month tracker grid (only month visualization) ── */}
       <HabitTrackerGrid
         entries={entries}
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
-      />
-
-      <Calendar
-        entries={entries}
-        selectedDate={selectedDate}
-        onSelectDate={setSelectedDate}
-        calendarAnchor={calendarAnchor}
-        onChangeAnchor={setCalendarAnchor}
       />
 
       {/* ── Share & About (merged from More page) ── */}

@@ -97,28 +97,21 @@ export default function DailyCheckIn({
     onUpdate({ ...entry, prayer: newVal });
   }
 
-  // Toggling a sub prayer ON also turns parent ON. Toggling OFF does NOT turn parent OFF.
+  // Toggling individual prayer is just a detail — does NOT auto-complete parent "الصلاة"
   function toggleIndividualPrayer(prayerKey) {
     const newPrayers = { ...prayers, [prayerKey]: !prayers[prayerKey] };
     const newDetails = { ...prayerDetails };
     if (!newPrayers[prayerKey]) newDetails[prayerKey] = { jamaa: false, nafila: false };
-    const updated = { ...entry, prayers: newPrayers, prayerDetails: newDetails };
-    // If turning ON a sub, ensure parent is ON
-    if (newPrayers[prayerKey]) updated.prayer = true;
-    onUpdate(updated);
+    onUpdate({ ...entry, prayers: newPrayers, prayerDetails: newDetails });
   }
 
+  // Prayer sub-details (jamaa/nafila) — just details, do NOT auto-complete anything
   function togglePrayerSub(prayerKey, subKey) {
     if (prayerKey === 'asr' && subKey === 'nafila') return;
     const oldSub = prayerDetails[prayerKey] || { jamaa: false, nafila: false };
     const newSubVal = !oldSub[subKey];
     const newDetails = { ...prayerDetails, [prayerKey]: { ...oldSub, [subKey]: newSubVal } };
-    const newPrayers = { ...prayers };
-    if (newSubVal && !newPrayers[prayerKey]) newPrayers[prayerKey] = true;
-    const updated = { ...entry, prayers: newPrayers, prayerDetails: newDetails };
-    // If turning ON a sub-sub, ensure parent is ON
-    if (newSubVal) updated.prayer = true;
-    onUpdate(updated);
+    onUpdate({ ...entry, prayerDetails: newDetails });
   }
 
   // Parent adhkar toggles independently — does NOT wipe subs
@@ -127,19 +120,15 @@ export default function DailyCheckIn({
     onUpdate({ ...entry, dhikr: newVal });
   }
 
-  // Toggling a sub adhkar ON also turns parent ON. Toggling OFF does NOT turn parent OFF.
+  // Toggling adhkar sub is just a detail — does NOT auto-complete parent "الأذكار"
   function toggleAdhkarSub(subKey) {
     const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
-    const updated = { ...entry, adhkarDetails: newAdhkar };
-    // If turning ON a sub, ensure parent is ON
-    if (newAdhkar[subKey]) updated.dhikr = true;
-    onUpdate(updated);
+    onUpdate({ ...entry, adhkarDetails: newAdhkar });
   }
 
   function toggleHabit(key) {
     const updated = { ...entry, [key]: !entry[key] };
     if (key === 'quran' && !updated.quran) { updated.quranPages = null; setQuranExpanded(false); }
-    // dhikr parent toggle is handled by toggleAdhkarParent — do NOT wipe subs
     onUpdate(updated);
   }
 
