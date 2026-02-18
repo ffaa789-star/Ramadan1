@@ -1,28 +1,15 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { getTodayYMD, addDaysYMD, toArabicNumeral } from '../dateUtils';
 import DailyCheckIn from '../components/DailyCheckIn';
-import GuidedTour, { isTourDone, resetTour } from '../components/GuidedTour';
 import useEntries from '../hooks/useEntries';
 
 export default function DailyPage() {
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
+  const [streakGlow, setStreakGlow] = useState(false);
   const { entries, getEntry, updateEntry, clearEntry, loading } = useEntries();
 
   const currentEntry = getEntry(selectedDate);
   const isToday = selectedDate === getTodayYMD();
-
-  // Tour state
-  const [tourActive, setTourActive] = useState(false);
-  const [tourExpandPrayer, setTourExpandPrayer] = useState(false);
-
-  // Auto-show tour on first visit (after loading completes)
-  useEffect(() => {
-    if (!loading && !isTourDone()) {
-      // Small delay to let the page render first
-      const t = setTimeout(() => setTourActive(true), 600);
-      return () => clearTimeout(t);
-    }
-  }, [loading]);
 
   // Compute consecutive submitted-day streak ending at today (or yesterday)
   const streak = useMemo(() => {
@@ -46,13 +33,12 @@ export default function DailyPage() {
   }
 
   function handleUpdate(updated) {
+    // Detect fresh submission → trigger streak glow
+    if (updated.submitted && !currentEntry.submitted) {
+      setStreakGlow(true);
+      setTimeout(() => setStreakGlow(false), 900);
+    }
     updateEntry(selectedDate, updated);
-  }
-
-  function handleRestartTour() {
-    resetTour();
-    setTourExpandPrayer(false);
-    setTourActive(true);
   }
 
   if (loading) {
@@ -66,12 +52,11 @@ export default function DailyPage() {
 
   return (
     <div className="daily-page">
-      {/* ── App title + streak + help ── */}
+      {/* ── App title + streak ── */}
       <div className="daily-header">
-        <button className="tour-help-btn" onClick={handleRestartTour} aria-label="جولة تعريفية">؟</button>
         <h1 className="daily-header-title">رفيق رمضان</h1>
         {streak > 0 && (
-          <span className="daily-header-streak">🔥 {toArabicNumeral(streak)} أيام متتالية</span>
+          <span className={`daily-header-streak${streakGlow ? ' glow' : ''}`}>🔥 {toArabicNumeral(streak)} أيام متتالية</span>
         )}
       </div>
 
@@ -84,17 +69,7 @@ export default function DailyPage() {
         isToday={isToday}
         onNavigateDate={handleNavigateDate}
         onClearDay={() => clearEntry(selectedDate)}
-        tourExpandPrayer={tourExpandPrayer}
       />
-
-      {/* ── Guided tour overlay ── */}
-      {tourActive && (
-        <GuidedTour
-          active={tourActive}
-          onClose={() => { setTourActive(false); setTourExpandPrayer(false); }}
-          onExpandPrayer={() => setTourExpandPrayer(true)}
-        />
-      )}
     </div>
   );
 }

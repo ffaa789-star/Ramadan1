@@ -31,13 +31,23 @@ const HABITS = [
 
 const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
 
+const CELEBRATION_MESSAGES = [
+  'أحسنت! 🌙',
+  'بارك الله فيك 🤍',
+  'استمر 👍',
+  'يوم جميل ✨',
+  'تقبل الله 🌿',
+];
+
+const CONFETTI_EMOJIS = ['🎉', '✨', '🎊', '🌟', '⭐', '🌙'];
+
 export default function DailyCheckIn({
   entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay,
-  tourExpandPrayer,
 }) {
   const [expanded, setExpanded] = useState(null); // only one at a time
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [celebration, setCelebration] = useState(null);
   const isFirstRender = useRef(true);
 
   const prayers = entry.prayers || {
@@ -71,11 +81,6 @@ export default function DailyCheckIn({
     const timer = setTimeout(() => setShowSaveToast(false), 800);
     return () => clearTimeout(timer);
   }, [entry]);
-
-  // Tour: auto-expand prayer when requested
-  useEffect(() => {
-    if (tourExpandPrayer) setExpanded('prayer');
-  }, [tourExpandPrayer]);
 
   /* ── Handlers ── */
   function toggle(key) {
@@ -123,7 +128,16 @@ export default function DailyCheckIn({
     onUpdate(u);
   }
 
-  function submitDay() { onUpdate({ ...entry, submitted: true }); setEditing(false); }
+  function submitDay() {
+    onUpdate({ ...entry, submitted: true });
+    setEditing(false);
+
+    // Reward feedback
+    try { navigator.vibrate?.(80); } catch { /* */ }
+    const msg = CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
+    setCelebration(msg);
+    setTimeout(() => setCelebration(null), 1800);
+  }
 
   function doExpand(key) {
     if (locked) return;
@@ -190,7 +204,7 @@ export default function DailyCheckIn({
       </div>
 
       {/* ── Flat habit list — paper checklist ── */}
-      <div className={`cl-list${dayState === 'approved' ? ' cl-list-faded' : ''}`} data-tour="daily-list">
+      <div className={`cl-list${dayState === 'approved' ? ' cl-list-faded' : ''}`}>
         {HABITS.map((h, i) => {
           const done = !!entry[h.key];
           const isOpen = expanded === h.key;
@@ -212,7 +226,7 @@ export default function DailyCheckIn({
                     else toggle(h.key);
                   }}
                   disabled={locked}
-                  {...(h.key === 'prayer' ? { 'data-tour': 'habit-toggle-prayer' } : {})}
+
                 >
                   {done && '✓'}
                 </button>
@@ -237,7 +251,7 @@ export default function DailyCheckIn({
                     className="cl-expand-btn"
                     onClick={() => doExpand(h.key)}
                     disabled={locked}
-                    {...(h.key === 'prayer' ? { 'data-tour': 'habit-expand-prayer' } : {})}
+
                   >
                     <span className={`cl-caret${isOpen ? ' open' : ''}`}>‹</span>
                   </button>
@@ -317,7 +331,7 @@ export default function DailyCheckIn({
       <div className="cl-action">
         {dayState === 'approved'
           ? <span className="cl-action-empty" />
-          : <button className="cl-approve" onClick={submitDay} data-tour="submit-button">تأكيد الإنجاز</button>
+          : <button className="cl-approve" onClick={submitDay}>تأكيد الإنجاز</button>
         }
       </div>
 
@@ -327,6 +341,24 @@ export default function DailyCheckIn({
       )}
 
       {showSaveToast && <div className="save-toast">✓ تم الحفظ</div>}
+
+      {/* ── Celebration overlay — confetti + message ── */}
+      {celebration && (
+        <div className="cl-celebrate" aria-hidden="true">
+          <div className="cl-confetti">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span key={i} className="cl-confetti-piece" style={{
+                '--x': `${Math.random() * 100}%`,
+                '--delay': `${Math.random() * 0.3}s`,
+                '--drift': `${(Math.random() - 0.5) * 60}px`,
+              }}>
+                {CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length]}
+              </span>
+            ))}
+          </div>
+          <span className="cl-celebrate-msg">{celebration}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getTodayYMD, toArabicNumeral, buildHijriMonthDays, formatHijriMonthYear } from '../dateUtils';
 import HabitTrackerGrid from '../components/HabitTrackerGrid';
-import { resetTour } from '../components/GuidedTour';
 import useEntries from '../hooks/useEntries';
 
 const HABIT_KEYS = [
@@ -21,12 +19,6 @@ export default function ReportPage() {
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
   const [expandedHabit, setExpandedHabit] = useState(null);
   const [showCompliance, setShowCompliance] = useState(false);
-  const navigate = useNavigate();
-
-  function handleRestartTour() {
-    resetTour();
-    navigate('/daily');
-  }
 
   const monthDays = useMemo(() => buildHijriMonthDays(selectedDate), [selectedDate]);
   const monthTitle = formatHijriMonthYear(monthDays[0]);
@@ -91,10 +83,7 @@ export default function ReportPage() {
 
   return (
     <div className="report-page">
-      <div className="report-title-row">
-        <h2 className="report-title">تقرير {monthTitle}</h2>
-        <button className="tour-reopen-btn" onClick={handleRestartTour}>؟ إعادة الجولة</button>
-      </div>
+      <h2 className="report-title">تقرير {monthTitle}</h2>
 
       {/* ── KPIs ── */}
       <div className="report-summary">
