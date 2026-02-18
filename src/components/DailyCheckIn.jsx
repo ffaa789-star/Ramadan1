@@ -44,7 +44,6 @@ const EHSAN_LINK = 'https://ehsan.sa/campaign/7116894CC2';
 export default function DailyCheckIn({
   entry, entries, onUpdate, selectedDate, isToday, onNavigateDate, onClearDay,
 }) {
-  const [showReflection, setShowReflection] = useState(false);
   const [prayerExpanded, setPrayerExpanded] = useState(false);
   const [quranExpanded, setQuranExpanded] = useState(false);
   const [adhkarExpanded, setAdhkarExpanded] = useState(false);
@@ -73,9 +72,12 @@ export default function DailyCheckIn({
   const locked = isSubmitted && !editing;
   const adhkarActiveCount = ADHKAR_SUBS.filter((s) => adhkarDetails[s.key]).length;
 
-  // Reset editing state when navigating to a different day
+  // Reset editing + collapse expansions when navigating days
   useEffect(() => {
     setEditing(false);
+    setPrayerExpanded(false);
+    setQuranExpanded(false);
+    setAdhkarExpanded(false);
   }, [selectedDate]);
 
   useEffect(() => {
@@ -96,12 +98,11 @@ export default function DailyCheckIn({
     return streak;
   }, [selectedDate, entries]);
 
-  /* ── Action handlers (all guarded by locked) ── */
+  /* ── All handlers guarded by locked ── */
 
   function togglePrayerMain() {
     if (locked) return;
-    const newVal = !entry.prayer;
-    onUpdate({ ...entry, prayer: newVal });
+    onUpdate({ ...entry, prayer: !entry.prayer });
   }
 
   function toggleIndividualPrayer(prayerKey) {
@@ -116,21 +117,18 @@ export default function DailyCheckIn({
     if (locked) return;
     if (prayerKey === 'asr' && subKey === 'nafila') return;
     const oldSub = prayerDetails[prayerKey] || { jamaa: false, nafila: false };
-    const newSubVal = !oldSub[subKey];
-    const newDetails = { ...prayerDetails, [prayerKey]: { ...oldSub, [subKey]: newSubVal } };
+    const newDetails = { ...prayerDetails, [prayerKey]: { ...oldSub, [subKey]: !oldSub[subKey] } };
     onUpdate({ ...entry, prayerDetails: newDetails });
   }
 
   function toggleAdhkarParent() {
     if (locked) return;
-    const newVal = !entry.dhikr;
-    onUpdate({ ...entry, dhikr: newVal });
+    onUpdate({ ...entry, dhikr: !entry.dhikr });
   }
 
   function toggleAdhkarSub(subKey) {
     if (locked) return;
-    const newAdhkar = { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] };
-    onUpdate({ ...entry, adhkarDetails: newAdhkar });
+    onUpdate({ ...entry, adhkarDetails: { ...adhkarDetails, [subKey]: !adhkarDetails[subKey] } });
   }
 
   function toggleHabit(key) {
@@ -158,11 +156,6 @@ export default function DailyCheckIn({
     onUpdate(updated);
   }
 
-  function handleNote(value) {
-    if (locked) return;
-    onUpdate({ ...entry, note: value });
-  }
-
   function submitDay() { onUpdate({ ...entry, submitted: true }); setEditing(false); }
   function startEditing() { setEditing(true); }
 
@@ -182,47 +175,62 @@ export default function DailyCheckIn({
 
   const hijriDate = formatHijriFromYMD(selectedDate);
 
+  /*
+   * STATE LOGIC:
+   * - "today"     = isToday && !isSubmitted
+   * - "past"      = !isToday && !isSubmitted   → muted, label "يوم سابق"
+   * - "approved"  = isSubmitted && !editing     → locked, green border, "تم اعتماد اليوم ✔"
+   * - "editing"   = isSubmitted && editing      → unlocked, amber indicator
+   */
+
+  // Determine the state label for the FIXED-HEIGHT status slot
+  let dayState = 'today';
+  if (isSubmitted && !editing) dayState = 'approved';
+  else if (isSubmitted && editing) dayState = 'editing';
+  else if (!isToday) dayState = 'past';
+
   return (
-    <div className="ck">
-      {/* ── Date bar with inline streak — FIXED HEIGHT ── */}
+    <div className={`ck${dayState === 'approved' ? ' ck-approved' : ''}${dayState === 'past' ? ' ck-past' : ''}`}>
+
+      {/* ── SLOT 1: Date navigation bar — ALWAYS 44px ── */}
       <div className="ck-date-bar">
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}>→</button>
         <div className="ck-date-center">
           <span className="ck-date-text">{hijriDate}</span>
-          {isToday && <span className="ck-today-label">اليوم</span>}
-          {!isToday && (
-            <button className="ck-back-today-btn" onClick={() => onNavigateDate(null)}>العودة لليوم</button>
+          {streakCount > 0 && (
+            <span className="ck-streak-inline">🔥 {toArabicNumeral(streakCount)}</span>
           )}
         </div>
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, +1))}>←</button>
       </div>
 
-      {/* ── Streak inline row — always same height ── */}
-      <div className="ck-streak-row">
-        {streakCount > 0
-          ? <span className="ck-streak-text">🔥 {toArabicNumeral(streakCount)} يوم متتابع</span>
-          : <span className="ck-streak-text ck-streak-empty">&nbsp;</span>
-        }
+      {/* ── SLOT 2: Status bar — ALWAYS 36px, only appearance changes ── */}
+      <div className={`ck-status ck-status-${dayState}`}>
+        {dayState === 'today' && (
+          <span className="ck-status-label">📅 اليوم</span>
+        )}
+        {dayState === 'past' && (
+          <>
+            <span className="ck-status-label">يوم سابق</span>
+            <button className="ck-status-action" onClick={() => onNavigateDate(null)}>العودة لليوم</button>
+          </>
+        )}
+        {dayState === 'approved' && (
+          <>
+            <span className="ck-status-label">تم اعتماد اليوم ✔</span>
+            <button className="ck-status-action" onClick={startEditing}>تعديل</button>
+          </>
+        )}
+        {dayState === 'editing' && (
+          <>
+            <span className="ck-status-label">✏️ وضع التعديل</span>
+            <button className="ck-status-action ck-status-save" onClick={submitDay}>حفظ</button>
+          </>
+        )}
       </div>
 
-      {/* ── Submitted badge (when locked) ── */}
-      {isSubmitted && !editing && (
-        <div className="ck-submitted-badge">
-          <span>تم الاعتماد ✅</span>
-          <button className="ck-edit-btn" onClick={startEditing}>تعديل</button>
-        </div>
-      )}
-
-      {/* ── Editing badge (when editing a submitted day) ── */}
-      {isSubmitted && editing && (
-        <div className="ck-editing-badge">
-          <span>وضع التعديل ✏️</span>
-          <button className="ck-done-edit-btn" onClick={submitDay}>حفظ</button>
-        </div>
-      )}
-
-      {/* ── Habit list card — fixed order, no reorder ── */}
-      <div className={`card ck-card${locked ? ' card-locked' : ''}${isSubmitted ? ' card-submitted' : ''}`}>
+      {/* ── SLOT 3: Habits card — ONE card, fixed structure, calm ── */}
+      <div className={`card ck-card${dayState === 'approved' ? ' ck-card-approved' : ''}`}>
         {HABITS.map((habit, idx) => {
           const done = !!entry[habit.key];
           const expandable = isExpandable(habit.key);
@@ -230,10 +238,8 @@ export default function DailyCheckIn({
 
           return (
             <div key={habit.key} className="ck-item-wrap">
-              {/* Divider between habits (not before first) */}
               {idx > 0 && <div className="ck-divider" />}
 
-              {/* Main row — icon + name on right, toggle switch on left */}
               <div
                 className={`ck-row${done ? ' done' : ''}`}
                 onClick={() => {
@@ -242,7 +248,6 @@ export default function DailyCheckIn({
                   else toggleHabit(habit.key);
                 }}
               >
-                {/* Right side: icon + name + sub-count + chevron */}
                 <span className="ck-icon">{habit.icon}</span>
                 <span className="ck-name">
                   {habit.name}
@@ -260,7 +265,6 @@ export default function DailyCheckIn({
                     onClick={(e) => e.stopPropagation()}>تبرع ↗</a>
                 )}
 
-                {/* Left side: toggle switch */}
                 <div
                   className={`ck-toggle ${done ? 'on' : ''}${locked ? ' disabled' : ''}`}
                   onClick={(e) => {
@@ -335,9 +339,8 @@ export default function DailyCheckIn({
           );
         })}
 
-        {/* Progress bar with label */}
+        {/* Progress bar */}
         <div className="ck-progress">
-          <div className="ck-progress-label">الإنجاز اليومي</div>
           <div className="ck-progress-track">
             <div className="ck-progress-fill" style={{ width: `${percentage}%` }} />
           </div>
@@ -345,37 +348,22 @@ export default function DailyCheckIn({
         </div>
       </div>
 
-      {/* Submit button (only when NOT submitted and NOT editing) */}
-      {!isSubmitted && (
-        <button className="btn btn-submit" onClick={submitDay}>اعتماد اليوم</button>
-      )}
+      {/* ── SLOT 4: Action bar — ALWAYS 48px height, content changes by state ── */}
+      <div className="ck-action-slot">
+        {dayState === 'approved' ? (
+          /* Approved: empty placeholder keeps same height */
+          <span className="ck-action-placeholder" />
+        ) : (
+          <button className="ck-submit-btn" onClick={submitDay}>
+            اعتماد اليوم
+          </button>
+        )}
+      </div>
 
-      {/* Reflection — hidden when locked */}
-      {!locked && (
-        <>
-          {(!showReflection && !entry.note) ? (
-            <button className="reflection-toggle-btn" onClick={() => setShowReflection(true)} style={{ marginTop: 8 }}>
-              ✏️ تأمل
-            </button>
-          ) : (
-            <textarea className="reflection-textarea" placeholder="تأمل اليوم..."
-              value={entry.note || ''} onChange={(e) => handleNote(e.target.value)}
-              autoFocus={showReflection && !entry.note} style={{ marginTop: 8, minHeight: 60 }} />
-          )}
-        </>
-      )}
-
-      {/* Show note read-only when locked and has content */}
-      {locked && entry.note && (
-        <div className="ck-note-readonly" style={{ marginTop: 8 }}>
-          {entry.note}
-        </div>
-      )}
-
-      {/* Footer actions — hidden when locked */}
-      {!locked && (
+      {/* ── Footer: clear button (only when not locked, non-intrusive) ── */}
+      {!locked && score > 0 && (
         <div className="ck-footer">
-          <button className="ck-footer-btn danger" onClick={onClearDay}>مسح</button>
+          <button className="ck-footer-btn danger" onClick={onClearDay}>مسح اليوم</button>
         </div>
       )}
 

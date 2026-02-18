@@ -34,7 +34,13 @@ export default function DailyPage() {
 
   return (
     <div className="daily-page">
-      {/* ── Daily quote (compact banner) ── */}
+      {/* ── App title ── */}
+      <div className="daily-header">
+        <h1 className="daily-header-title">رفيق رمضان</h1>
+        <p className="daily-header-subtitle">رفيقك في رمضان</p>
+      </div>
+
+      {/* ── Ayah / Hadith card ── */}
       <DailyQuote selectedDate={selectedDate} />
 
       {/* ── Daily check-in ── */}
