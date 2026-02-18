@@ -15,7 +15,9 @@
       "Bash(npm install:*)",
       "Bash(git check-ignore:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nFull-stack transformation + local-first onboarding\n\n- Add React Router with 4 pages \\(Daily, Report, More, Admin\\)\n- Add Supabase integration \\(auth context, entries hook, DB utils\\)\n- Add bottom nav, notification bell, habit tracker grid\n- Add 6th habit \\(fasting\\), auto-sort completed items down\n- Remove classic UI mode, keep compact only\n- Convert onboarding to auth-free landing page with feature list\n- Bypass ProtectedRoute for local-only usage \\(auth reconnected later\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(lsof:*)"
     ]
   }
 }

@@ -1091,10 +1091,22 @@ body {
   font-family: var(--font-primary);
   transition: color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 .bottom-nav-item.active {
   color: var(--color-primary);
+}
+
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: 0 0 3px 3px;
 }
 
 .bottom-nav-item.active .bottom-nav-label {
@@ -1102,14 +1114,14 @@ body {
 }
 
 .bottom-nav-icon {
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1;
   margin-bottom: 2px;
   position: relative;
 }
 
 .bottom-nav-label {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
 }
 
@@ -1316,6 +1328,28 @@ body {
   min-width: 64px;
 }
 
+.habit-grid-label-expandable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.habit-grid-label-expandable:active {
+  background: var(--color-bg);
+}
+
+.habit-grid-chevron {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  display: inline-block;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+  margin-left: 2px;
+}
+
+.habit-grid-chevron.open {
+  transform: rotate(-90deg);
+}
+
 .habit-grid-icon {
   margin-left: 3px;
 }
@@ -1426,8 +1460,13 @@ body {
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--color-text);
-  min-width: 60px;
+  width: 72px;
+  flex-shrink: 0;
   white-space: nowrap;
+}
+
+.report-habit-label-sub {
+  width: 72px;
 }
 
 .report-habit-bar-track {
@@ -1449,7 +1488,8 @@ body {
   font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-primary);
-  min-width: 28px;
+  width: 34px;
+  flex-shrink: 0;
   text-align: left;
 }
 
@@ -1468,21 +1508,21 @@ body {
   color: var(--color-text);
 }
 
-/* ── Expandable habit row ── */
-.report-habit-expandable {
+/* ── Collapsible section toggle ── */
+.report-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  border-radius: var(--radius-sm);
-  padding: 4px 6px;
-  margin: 0 -6px;
-  transition: background 0.15s ease;
+  padding: 2px 0;
 }
 
-.report-habit-expandable:active {
-  background: var(--color-bg);
+.report-section-toggle .report-section-title {
+  margin-bottom: 0;
 }
 
-.report-expand-icon {
+.report-toggle-icon {
   font-size: 1rem;
   color: var(--color-text-muted);
   display: inline-block;
@@ -1494,41 +1534,26 @@ body {
   text-align: center;
 }
 
-.report-expand-icon.open {
+.report-toggle-icon.open {
   transform: rotate(-90deg);
 }
 
-/* ── Sub-habit list (expanded) ── */
-.report-sub-list {
-  padding: 2px 0 6px 24px;
+.report-compliance-body {
+  padding-top: 10px;
   animation: slideDown 0.2s ease;
 }
 
-.report-sub-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 5px;
+/* ── Expand card (sub-details below tracker) ── */
+.report-expand-card {
+  padding: 12px 14px;
+  animation: slideDown 0.2s ease;
 }
 
-.report-sub-name {
-  font-size: 0.68rem;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  min-width: 55px;
-  white-space: nowrap;
-}
-
-.report-sub-bar {
-  height: 5px;
-}
-
-.report-sub-pct {
-  font-size: 0.6rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  min-width: 24px;
-  text-align: left;
+.report-expand-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
 }
 
 /* ── Best & Weakest habit cards ── */

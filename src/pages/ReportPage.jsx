@@ -26,10 +26,13 @@ const ADHKAR_SUBS = [
   { key: 'duaa', name: 'الدعاء' },
 ];
 
+const EXPANDABLE_KEYS = ['prayer', 'dhikr'];
+
 export default function ReportPage() {
   const { entries, loading } = useEntries();
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
   const [expandedHabit, setExpandedHabit] = useState(null);
+  const [showCompliance, setShowCompliance] = useState(false);
 
   const monthDays = useMemo(() => buildHijriMonthDays(selectedDate), [selectedDate]);
   const monthTitle = formatHijriMonthYear(monthDays[0]);
@@ -44,14 +47,12 @@ export default function ReportPage() {
       return { ...h, count, pct };
     });
 
-    // Prayer sub-stats
     const prayerSubStats = PRAYER_SUBS.map((p) => {
       const count = daysWithData.filter((ymd) => entries[ymd]?.prayers?.[p.key]).length;
       const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
       return { ...p, count, pct };
     });
 
-    // Adhkar sub-stats
     const adhkarSubStats = ADHKAR_SUBS.map((a) => {
       const count = daysWithData.filter((ymd) => entries[ymd]?.adhkarDetails?.[a.key]).length;
       const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
@@ -108,13 +109,16 @@ export default function ReportPage() {
     );
   }
 
-  // Determine which habits are expandable
-  const expandableKeys = ['prayer', 'dhikr'];
+  // Determine which sub-stats to show for expanded habit
+  const expandedSubs = expandedHabit === 'prayer' ? stats.prayerSubStats
+    : expandedHabit === 'dhikr' ? stats.adhkarSubStats
+    : null;
 
   return (
     <div className="report-page">
       <h2 className="report-title">تقرير {monthTitle}</h2>
 
+      {/* ── KPIs ── */}
       <div className="report-summary">
         <div className="report-stat-card">
           <span className="report-stat-num">{toArabicNumeral(stats.submittedDays)}</span>
@@ -130,60 +134,56 @@ export default function ReportPage() {
         </div>
       </div>
 
-      {/* ── Habit breakdown with expandable sub-habits ── */}
-      <div className="card report-habits-card">
-        <h3 className="report-section-title">نسبة الالتزام بالعادات</h3>
-        {stats.habitStats.map((h) => {
-          const isExpandable = expandableKeys.includes(h.key);
-          const isOpen = expandedHabit === h.key;
+      {/* ── A: Tracker grid — immediately below KPIs ── */}
+      <HabitTrackerGrid
+        entries={entries}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+        expandedHabit={expandedHabit}
+        expandableKeys={EXPANDABLE_KEYS}
+        onToggleExpand={toggleExpand}
+      />
 
-          return (
-            <div key={h.key}>
-              <div
-                className={`report-habit-row${isExpandable ? ' report-habit-expandable' : ''}`}
-                onClick={() => isExpandable && toggleExpand(h.key)}
-              >
-                {isExpandable && (
-                  <span className={`report-expand-icon${isOpen ? ' open' : ''}`}>‹</span>
-                )}
+      {/* ── B: Sub-habit details — shown below tracker when expanded ── */}
+      {expandedSubs && (
+        <div className="card report-expand-card">
+          <h3 className="report-expand-title">
+            {expandedHabit === 'prayer' ? '🕌 تفاصيل الصلاة' : '📿 تفاصيل الأذكار'}
+          </h3>
+          {expandedSubs.map((s) => (
+            <div key={s.key} className="report-habit-row">
+              <span className="report-habit-label report-habit-label-sub">{s.name}</span>
+              <div className="report-habit-bar-track">
+                <div className="report-habit-bar-fill" style={{ width: `${s.pct}%` }} />
+              </div>
+              <span className="report-habit-pct" dir="ltr">{toArabicNumeral(s.pct)}%</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── C: Compliance chart — collapsed by default ── */}
+      <div className="card report-habits-card">
+        <div
+          className="report-section-toggle"
+          onClick={() => setShowCompliance(!showCompliance)}
+        >
+          <span className={`report-toggle-icon${showCompliance ? ' open' : ''}`}>‹</span>
+          <h3 className="report-section-title">نسبة الالتزام بالعادات</h3>
+        </div>
+        {showCompliance && (
+          <div className="report-compliance-body">
+            {stats.habitStats.map((h) => (
+              <div key={h.key} className="report-habit-row">
                 <span className="report-habit-label">{h.icon} {h.name}</span>
                 <div className="report-habit-bar-track">
                   <div className="report-habit-bar-fill" style={{ width: `${h.pct}%` }} />
                 </div>
                 <span className="report-habit-pct" dir="ltr">{toArabicNumeral(h.pct)}%</span>
               </div>
-
-              {/* Sub-habits expansion */}
-              {h.key === 'prayer' && isOpen && (
-                <div className="report-sub-list">
-                  {stats.prayerSubStats.map((p) => (
-                    <div key={p.key} className="report-sub-row">
-                      <span className="report-sub-name">{p.name}</span>
-                      <div className="report-habit-bar-track report-sub-bar">
-                        <div className="report-habit-bar-fill" style={{ width: `${p.pct}%` }} />
-                      </div>
-                      <span className="report-sub-pct" dir="ltr">{toArabicNumeral(p.pct)}%</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {h.key === 'dhikr' && isOpen && (
-                <div className="report-sub-list">
-                  {stats.adhkarSubStats.map((a) => (
-                    <div key={a.key} className="report-sub-row">
-                      <span className="report-sub-name">{a.name}</span>
-                      <div className="report-habit-bar-track report-sub-bar">
-                        <div className="report-habit-bar-fill" style={{ width: `${a.pct}%` }} />
-                      </div>
-                      <span className="report-sub-pct" dir="ltr">{toArabicNumeral(a.pct)}%</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── Best habit ── */}
@@ -211,13 +211,6 @@ export default function ReportPage() {
           <p className="report-insight">لا توجد بيانات لهذا الشهر بعد.</p>
         </div>
       )}
-
-      {/* ── Horizontal month tracker grid ── */}
-      <HabitTrackerGrid
-        entries={entries}
-        selectedDate={selectedDate}
-        onSelectDate={setSelectedDate}
-      />
 
       {/* ── Share & About ── */}
       <div className="card report-share-card">
