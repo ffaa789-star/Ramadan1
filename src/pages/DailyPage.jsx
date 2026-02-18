@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getTodayYMD } from '../dateUtils';
+import { useState, useMemo } from 'react';
+import { getTodayYMD, addDaysYMD, toArabicNumeral } from '../dateUtils';
 import DailyCheckIn from '../components/DailyCheckIn';
 import useEntries from '../hooks/useEntries';
 
@@ -9,6 +9,19 @@ export default function DailyPage() {
 
   const currentEntry = getEntry(selectedDate);
   const isToday = selectedDate === getTodayYMD();
+
+  // Compute consecutive submitted-day streak ending at today (or yesterday)
+  const streak = useMemo(() => {
+    let count = 0;
+    let cur = getTodayYMD();
+    // If today not submitted, start checking from yesterday
+    if (!entries[cur]?.submitted) cur = addDaysYMD(cur, -1);
+    while (entries[cur]?.submitted) {
+      count++;
+      cur = addDaysYMD(cur, -1);
+    }
+    return count;
+  }, [entries]);
 
   function handleNavigateDate(dateStr) {
     if (dateStr === null) {
@@ -36,6 +49,9 @@ export default function DailyPage() {
       {/* ── App title + streak ── */}
       <div className="daily-header">
         <h1 className="daily-header-title">رفيق رمضان</h1>
+        {streak > 0 && (
+          <span className="daily-header-streak">🔥 {toArabicNumeral(streak)} أيام متتالية</span>
+        )}
       </div>
 
       {/* ── Daily check-in ── */}

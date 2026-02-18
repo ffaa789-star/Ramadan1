@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import {
   buildHijriMonthDays,
   formatHijriDayOnly,
@@ -14,6 +14,20 @@ const HABITS = [
   { key: 'dhikr', name: 'الأذكار', icon: '📿' },
 ];
 
+const PRAYER_SUBS = [
+  { key: 'fajr', name: 'الفجر' },
+  { key: 'dhuhr', name: 'الظهر' },
+  { key: 'asr', name: 'العصر' },
+  { key: 'maghrib', name: 'المغرب' },
+  { key: 'isha', name: 'العشاء' },
+];
+
+const ADHKAR_SUBS = [
+  { key: 'morning', name: 'الصباح' },
+  { key: 'evening', name: 'المساء' },
+  { key: 'duaa', name: 'الدعاء' },
+];
+
 export default function HabitTrackerGrid({
   entries,
   selectedDate,
@@ -24,6 +38,20 @@ export default function HabitTrackerGrid({
 }) {
   const todayYmd = getTodayYMD();
   const monthDays = useMemo(() => buildHijriMonthDays(selectedDate), [selectedDate]);
+
+  // Determine which sub-rows to render for expanded habit
+  const subRows = expandedHabit === 'prayer' ? PRAYER_SUBS
+    : expandedHabit === 'dhikr' ? ADHKAR_SUBS
+    : null;
+
+  // Helper: check if a sub-item is done for a given day
+  function isSubDone(ymd, parentKey, subKey) {
+    const dayEntry = entries[ymd];
+    if (!dayEntry) return false;
+    if (parentKey === 'prayer') return !!dayEntry.prayers?.[subKey];
+    if (parentKey === 'dhikr') return !!dayEntry.adhkarDetails?.[subKey];
+    return false;
+  }
 
   return (
     <div className="habit-grid-wrap">
@@ -55,32 +83,57 @@ export default function HabitTrackerGrid({
               const isOpen = expandedHabit === habit.key;
 
               return (
-                <tr key={habit.key}>
-                  <td
-                    className={`habit-grid-label${isExpandable ? ' habit-grid-label-expandable' : ''}`}
-                    onClick={() => isExpandable && onToggleExpand?.(habit.key)}
-                  >
-                    {isExpandable && (
-                      <span className={`habit-grid-chevron${isOpen ? ' open' : ''}`}>‹</span>
-                    )}
-                    <span className="habit-grid-icon">{habit.icon}</span>
-                    <span className="habit-grid-name">{habit.name}</span>
-                  </td>
-                  {monthDays.map((ymd) => {
-                    const dayEntry = entries[ymd];
-                    const done = dayEntry ? !!dayEntry[habit.key] : false;
-                    const isSel = ymd === selectedDate;
-                    return (
-                      <td
-                        key={ymd}
-                        className={`habit-grid-cell${done ? ' done' : ''}${isSel ? ' sel' : ''}`}
-                        onClick={() => onSelectDate(ymd)}
-                      >
-                        {done ? '✓' : ''}
+                <Fragment key={habit.key}>
+                  {/* Main habit row */}
+                  <tr>
+                    <td
+                      className={`habit-grid-label${isExpandable ? ' habit-grid-label-expandable' : ''}`}
+                      onClick={() => isExpandable && onToggleExpand?.(habit.key)}
+                    >
+                      {isExpandable && (
+                        <span className={`habit-grid-chevron${isOpen ? ' open' : ''}`}>‹</span>
+                      )}
+                      <span className="habit-grid-icon">{habit.icon}</span>
+                      <span className="habit-grid-name">{habit.name}</span>
+                    </td>
+                    {monthDays.map((ymd) => {
+                      const dayEntry = entries[ymd];
+                      const done = dayEntry ? !!dayEntry[habit.key] : false;
+                      const isSel = ymd === selectedDate;
+                      return (
+                        <td
+                          key={ymd}
+                          className={`habit-grid-cell${done ? ' done' : ''}${isSel ? ' sel' : ''}`}
+                          onClick={() => onSelectDate(ymd)}
+                        >
+                          {done ? '✓' : ''}
+                        </td>
+                      );
+                    })}
+                  </tr>
+
+                  {/* Sub-rows — only when this habit is expanded */}
+                  {isOpen && subRows && subRows.map((sub) => (
+                    <tr key={`${habit.key}-${sub.key}`} className="habit-grid-sub-row">
+                      <td className="habit-grid-label habit-grid-sub-label">
+                        <span className="habit-grid-sub-name">{sub.name}</span>
                       </td>
-                    );
-                  })}
-                </tr>
+                      {monthDays.map((ymd) => {
+                        const done = isSubDone(ymd, habit.key, sub.key);
+                        const isSel = ymd === selectedDate;
+                        return (
+                          <td
+                            key={ymd}
+                            className={`habit-grid-cell habit-grid-sub-cell${done ? ' done' : ''}${isSel ? ' sel' : ''}`}
+                            onClick={() => onSelectDate(ymd)}
+                          >
+                            {done ? '✓' : ''}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </Fragment>
               );
             })}
           </tbody>
@@ -89,3 +142,4 @@ export default function HabitTrackerGrid({
     </div>
   );
 }
+

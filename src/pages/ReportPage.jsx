@@ -12,20 +12,6 @@ const HABIT_KEYS = [
   { key: 'dhikr', name: 'الأذكار', icon: '📿' },
 ];
 
-const PRAYER_SUBS = [
-  { key: 'fajr', name: 'الفجر' },
-  { key: 'dhuhr', name: 'الظهر' },
-  { key: 'asr', name: 'العصر' },
-  { key: 'maghrib', name: 'المغرب' },
-  { key: 'isha', name: 'العشاء' },
-];
-
-const ADHKAR_SUBS = [
-  { key: 'morning', name: 'أذكار الصباح' },
-  { key: 'evening', name: 'أذكار المساء' },
-  { key: 'duaa', name: 'الدعاء' },
-];
-
 const EXPANDABLE_KEYS = ['prayer', 'dhikr'];
 
 export default function ReportPage() {
@@ -45,18 +31,6 @@ export default function ReportPage() {
       const count = daysWithData.filter((ymd) => entries[ymd]?.[h.key]).length;
       const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
       return { ...h, count, pct };
-    });
-
-    const prayerSubStats = PRAYER_SUBS.map((p) => {
-      const count = daysWithData.filter((ymd) => entries[ymd]?.prayers?.[p.key]).length;
-      const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
-      return { ...p, count, pct };
-    });
-
-    const adhkarSubStats = ADHKAR_SUBS.map((a) => {
-      const count = daysWithData.filter((ymd) => entries[ymd]?.adhkarDetails?.[a.key]).length;
-      const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
-      return { ...a, count, pct };
     });
 
     let bestStreak = 0;
@@ -80,8 +54,6 @@ export default function ReportPage() {
       submittedDays: submittedDays.length,
       bestStreak,
       habitStats,
-      prayerSubStats,
-      adhkarSubStats,
       strongest,
       weakest,
     };
@@ -108,11 +80,6 @@ export default function ReportPage() {
       </div>
     );
   }
-
-  // Determine which sub-stats to show for expanded habit
-  const expandedSubs = expandedHabit === 'prayer' ? stats.prayerSubStats
-    : expandedHabit === 'dhikr' ? stats.adhkarSubStats
-    : null;
 
   return (
     <div className="report-page">
@@ -144,25 +111,7 @@ export default function ReportPage() {
         onToggleExpand={toggleExpand}
       />
 
-      {/* ── B: Sub-habit details — shown below tracker when expanded ── */}
-      {expandedSubs && (
-        <div className="card report-expand-card">
-          <h3 className="report-expand-title">
-            {expandedHabit === 'prayer' ? '🕌 تفاصيل الصلاة' : '📿 تفاصيل الأذكار'}
-          </h3>
-          {expandedSubs.map((s) => (
-            <div key={s.key} className="report-habit-row">
-              <span className="report-habit-label report-habit-label-sub">{s.name}</span>
-              <div className="report-habit-bar-track">
-                <div className="report-habit-bar-fill" style={{ width: `${s.pct}%` }} />
-              </div>
-              <span className="report-habit-pct" dir="ltr">{toArabicNumeral(s.pct)}%</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* ── C: Compliance chart — collapsed by default ── */}
+      {/* ── B: Compliance chart — collapsed by default ── */}
       <div className="card report-habits-card">
         <div
           className="report-section-toggle"
@@ -186,23 +135,18 @@ export default function ReportPage() {
         )}
       </div>
 
-      {/* ── Best habit ── */}
+      {/* ── Best / Weakest habits — compact blocks ── */}
       {stats.strongest && stats.strongest.pct > 0 && (
         <div className="card report-best-card">
-          <div className="report-best-label">أفضل عادة لديك</div>
-          <div className="report-best-value">
-            {stats.strongest.icon} أقوى عادة: <strong>{stats.strongest.name}</strong> — استمر 👌
-          </div>
+          <span className="report-insight-title">أفضل عادة 👍</span>
+          <span className="report-insight-body">{stats.strongest.icon} <strong>{stats.strongest.name}</strong> — ثابت أغلب الأيام</span>
         </div>
       )}
 
-      {/* ── Weakest habit ── */}
       {stats.weakest && stats.daysTracked > 0 && stats.weakest.pct < 100 && (
         <div className="card report-weak-card">
-          <div className="report-weak-label">أقل عادة تحتاج اهتمام</div>
-          <div className="report-weak-value">
-            {stats.weakest.icon} تحتاج تركيز أكثر على: <strong>{stats.weakest.name}</strong>
-          </div>
+          <span className="report-insight-title">تحتاج تركيز ⚡</span>
+          <span className="report-insight-body">{stats.weakest.icon} <strong>{stats.weakest.name}</strong> — ركّز عليها أكثر</span>
         </div>
       )}
 
