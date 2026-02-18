@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 const QUOTES = [
   { text: '﴿ إِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾', ref: 'سورة الشرح - آية ٦' },
   { text: '﴿ وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ ﴾', ref: 'سورة يوسف - آية ٨٧' },
@@ -43,22 +41,13 @@ function getQuoteForDate(dateStr) {
 }
 
 export default function DailyQuote({ selectedDate }) {
-  const [expanded, setExpanded] = useState(false);
   const quote = getQuoteForDate(selectedDate);
 
   return (
-    <div className={`quote-card quote-card-compact${expanded ? ' quote-expanded' : ''}`} onClick={() => setExpanded(!expanded)}>
-      <div className="quote-collapsed-row">
-        <span className="quote-collapsed-icon">🌙</span>
-        {expanded ? (
-          <div className="quote-full">
-            <div className="quote-text">{quote.text}</div>
-            <div className="quote-reference">{quote.ref}</div>
-          </div>
-        ) : (
-          <span className="quote-collapsed-text">{quote.text}</span>
-        )}
-      </div>
+    <div className="quote-card-big">
+      <div className="quote-big-moon">🌙</div>
+      <div className="quote-big-text">{quote.text}</div>
+      <div className="quote-big-ref">{quote.ref}</div>
     </div>
   );
 }

@@ -169,7 +169,7 @@ export default function DailyCheckIn({
 
   return (
     <div className="ck">
-      {/* ── Slim date bar ── */}
+      {/* ── Date bar ── */}
       <div className="ck-date-bar">
         <button className="ck-arrow" onClick={() => onNavigateDate(addDaysYMD(selectedDate, -1))}>→</button>
         <div className="ck-date-center">
@@ -188,7 +188,7 @@ export default function DailyCheckIn({
         </div>
       )}
 
-      {/* ── Checklist card — fixed order (HABITS array, no sorting) ── */}
+      {/* ── Habit list card — fixed order (HABITS array, no sorting) ── */}
       <div className={`card ck-card${isSubmitted ? ' card-submitted' : ''}`}>
         {HABITS.map((habit) => {
           const done = !!entry[habit.key];
@@ -197,7 +197,7 @@ export default function DailyCheckIn({
 
           return (
             <div key={habit.key} className="ck-item-wrap">
-              {/* Main row */}
+              {/* Main row — icon + name on right, toggle switch on left */}
               <div
                 className={`ck-row${done ? ' done' : ''}`}
                 onClick={() => {
@@ -205,18 +205,7 @@ export default function DailyCheckIn({
                   else toggleHabit(habit.key);
                 }}
               >
-                <div
-                  className={`ck-check ${done ? 'on' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (habit.key === 'prayer') togglePrayerMain();
-                    else if (habit.key === 'dhikr') toggleAdhkarParent();
-                    else toggleHabit(habit.key);
-                  }}
-                >
-                  {done && '✓'}
-                </div>
-
+                {/* Right side: icon + name + sub-count + chevron */}
                 <span className="ck-icon">{habit.icon}</span>
                 <span className="ck-name">
                   {habit.name}
@@ -225,14 +214,26 @@ export default function DailyCheckIn({
                   {habit.key === 'dhikr' && adhkarActiveCount > 0 && <span className="ck-sub-count"> {toArabicNumeral(adhkarActiveCount)}/٣</span>}
                 </span>
 
-                <div className="ck-row-end">
-                  {habit.key === 'charity' && (
-                    <a className="donate-link" href={EHSAN_LINK} target="_blank" rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}>تبرع ↗</a>
-                  )}
-                  {expandable && (
-                    <span className={`ck-chevron ${expanded ? 'open' : ''}`}>‹</span>
-                  )}
+                {expandable && (
+                  <span className={`ck-chevron ${expanded ? 'open' : ''}`}>‹</span>
+                )}
+
+                {habit.key === 'charity' && (
+                  <a className="donate-link" href={EHSAN_LINK} target="_blank" rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}>تبرع ↗</a>
+                )}
+
+                {/* Left side: toggle switch */}
+                <div
+                  className={`ck-toggle ${done ? 'on' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (habit.key === 'prayer') togglePrayerMain();
+                    else if (habit.key === 'dhikr') toggleAdhkarParent();
+                    else toggleHabit(habit.key);
+                  }}
+                >
+                  <div className="ck-toggle-knob" />
                 </div>
               </div>
 
@@ -296,8 +297,9 @@ export default function DailyCheckIn({
           );
         })}
 
-        {/* Progress bar */}
+        {/* Progress bar with label */}
         <div className="ck-progress">
+          <div className="ck-progress-label">الإنجاز اليومي</div>
           <div className="ck-progress-track">
             <div className="ck-progress-fill" style={{ width: `${percentage}%` }} />
           </div>
