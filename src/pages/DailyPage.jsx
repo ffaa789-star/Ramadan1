@@ -34,15 +34,8 @@ export default function DailyPage() {
 
   return (
     <div className="daily-page">
-      {/* ── Page title ── */}
-      <div className="daily-header">
-        <h1 className="daily-header-title">بطاقة المتابعة اليومية</h1>
-      </div>
-
-      {/* ── Daily quote (big green card) ── */}
       <DailyQuote selectedDate={selectedDate} />
 
-      {/* ── Daily check-in ── */}
       <DailyCheckIn
         entry={currentEntry}
         entries={entries}
