@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import BottomNav from './components/BottomNav';
@@ -9,13 +9,15 @@ import MorePage from './pages/MorePage';
 import AdminPage from './pages/AdminPage';
 import './App.css';
 
+const ONBOARDING_PATHS = ['/', '/onboarding'];
+
 export default function App() {
   const location = useLocation();
-  const isOnboarding = location.pathname === '/onboarding';
+  const isOnboarding = ONBOARDING_PATHS.includes(location.pathname);
 
   return (
     <>
-      {/* Header — always compact */}
+      {/* Header — hidden on onboarding */}
       {!isOnboarding && (
         <header className="app-header app-header-compact">
           <h1 className="app-title">رفيق رمضان</h1>
@@ -23,9 +25,13 @@ export default function App() {
       )}
 
       <Routes>
+        {/* Onboarding — both "/" and "/onboarding" */}
+        <Route path="/" element={<OnboardingPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* Main app pages */}
         <Route
-          path="/"
+          path="/daily"
           element={
             <ProtectedRoute>
               <DailyPage />
@@ -56,6 +62,9 @@ export default function App() {
             </AdminRoute>
           }
         />
+
+        {/* Fallback — redirect unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {/* Bottom nav — hidden on onboarding */}

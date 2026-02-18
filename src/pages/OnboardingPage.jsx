@@ -31,7 +31,7 @@ export default function OnboardingPage() {
 
         <button
           className="btn btn-submit onboarding-btn"
-          onClick={() => navigate('/', { replace: true })}
+          onClick={() => navigate('/daily', { replace: true })}
         >
           ابدأ رحلتك
         </button>
