@@ -19,7 +19,7 @@ export default function OnboardingPage() {
 
       {/* ── Title ── */}
       <h1 className="ob-title">رفيق رمضان</h1>
-      <p className="ob-subtitle">يساعدك تلتزم وتستمر… يومًا بعد يوم</p>
+      <p className="ob-subtitle">يساعدك تلتزم وتستمر… يوم بعد يوم</p>
 
       {/* ── Description ── */}
       <div className="ob-card">
@@ -48,7 +48,7 @@ export default function OnboardingPage() {
         </div>
         <div className="ob-value">
           <span className="ob-value-icon">📊</span>
-          <span className="ob-value-text">راجع أداءك نهاية الشهر</span>
+          <span className="ob-value-text">راجع أداءك بشكل متراكمي</span>
         </div>
         <div className="ob-value">
           <span className="ob-value-icon">💪</span>
@@ -66,6 +66,7 @@ export default function OnboardingPage() {
 
       {/* ── Privacy note ── */}
       <p className="ob-privacy">بياناتك على جهازك فقط — لا حساب ولا تسجيل</p>
+      <p className="ob-privacy">🔒 بياناتك محفوظة في جهازك فقط — لا يتم رفعها أو قراءتها من أي طرف</p>
     </div>
   );
 }

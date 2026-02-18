@@ -8,7 +8,7 @@ export default function BottomNav() {
     <nav className="bottom-nav">
       <NavLink to="/daily" className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}>
         <span className="bottom-nav-icon">📋</span>
-        <span className="bottom-nav-label">اليومية</span>
+        <span className="bottom-nav-label">الإنجاز اليومي</span>
       </NavLink>
 
       <NavLink to="/report" className={({ isActive }) => `bottom-nav-item${isActive ? ' active' : ''}`}>
