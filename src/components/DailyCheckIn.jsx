@@ -71,8 +71,6 @@ export default function DailyCheckIn({
     return () => clearTimeout(timer);
   }, [entry]);
 
-  // Streak removed from here — now shown in DailyPage header
-
   /* ── Handlers ── */
   function toggle(key) {
     if (locked) return;
@@ -128,15 +126,19 @@ export default function DailyCheckIn({
 
   // Build sub-label for each expandable habit
   function subLabel(key) {
-    if (key === 'prayer') return `${toArabicNumeral(prayerCount)}/٥`;
+    if (key === 'prayer') return `${toArabicNumeral(prayerCount)} / ٥`;
     if (key === 'quran' && entry.quranPages > 0) return `${toArabicNumeral(entry.quranPages)} ص`;
-    if (key === 'dhikr' && adhkarCount > 0) return `${toArabicNumeral(adhkarCount)}/٣`;
+    if (key === 'dhikr' && adhkarCount > 0) return `${toArabicNumeral(adhkarCount)} / ٣`;
     return null;
   }
+
+  const todayYMD = getTodayYMD();
+  const isFuture = selectedDate > todayYMD;
 
   let dayState = 'today';
   if (isSubmitted && !editing) dayState = 'approved';
   else if (isSubmitted && editing) dayState = 'editing';
+  else if (isFuture) dayState = 'future';
   else if (!isToday) dayState = 'past';
 
   const hijriDate = formatHijriFromYMD(selectedDate);
@@ -158,6 +160,12 @@ export default function DailyCheckIn({
         {dayState === 'past' && (
           <>
             <span>يوم سابق</span>
+            <button className="cl-strip-btn" onClick={() => onNavigateDate(null)}>العودة لليوم</button>
+          </>
+        )}
+        {dayState === 'future' && (
+          <>
+            <span>يوم قادم</span>
             <button className="cl-strip-btn" onClick={() => onNavigateDate(null)}>العودة لليوم</button>
           </>
         )}
@@ -209,7 +217,7 @@ export default function DailyCheckIn({
                 >
                   <span className="cl-icon">{h.icon}</span>
                   <span className="cl-name">{h.name}</span>
-                  {sl && <span className="cl-detail">{sl}</span>}
+                  {sl && <span className="cl-detail" dir="ltr">{sl}</span>}
                   {h.key === 'charity' && (
                     <a className="cl-donate" href={EHSAN_LINK} target="_blank" rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}>تبرع ↗</a>
@@ -290,7 +298,7 @@ export default function DailyCheckIn({
         <div className="cl-bar">
           <div className="cl-fill" style={{ width: `${(score / 6) * 100}%` }} />
         </div>
-        <span className="cl-score">{toArabicNumeral(score)}/٦</span>
+        <span className="cl-score" dir="ltr">{toArabicNumeral(score)} / ٦</span>
       </div>
 
       {/* ── Action slot — ALWAYS 44px ── */}

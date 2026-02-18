@@ -378,14 +378,6 @@ body {
   text-overflow: ellipsis;
 }
 
-.cl-streak {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
 /* ── Status strip — ALWAYS 32px, state changes color/text only ── */
 .cl-strip {
   height: 32px;
@@ -417,6 +409,11 @@ body {
   color: white;
   font-size: 0.85rem;
   box-shadow: 0 2px 8px rgba(45, 80, 22, 0.25);
+}
+
+.cl-strip-future {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
 }
 
 .cl-strip-editing {
@@ -804,13 +801,6 @@ body {
   margin: 0;
 }
 
-.daily-header-streak {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  margin-top: 2px;
-}
-
 /* ===== Daily Quote — Compact Banner ===== */
 .quote-banner {
   display: flex;
@@ -1105,6 +1095,10 @@ body {
 
 .bottom-nav-item.active {
   color: var(--color-primary);
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  font-weight: 700;
 }
 
 .bottom-nav-icon {
@@ -1403,6 +1397,116 @@ body {
 
 .report-insight strong {
   color: var(--color-text);
+}
+
+/* ── Expandable habit row ── */
+.report-habit-expandable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  margin: 0 -6px;
+  transition: background 0.15s ease;
+}
+
+.report-habit-expandable:active {
+  background: var(--color-bg);
+}
+
+.report-expand-icon {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  display: inline-block;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+  flex-shrink: 0;
+  line-height: 1;
+  width: 16px;
+  text-align: center;
+}
+
+.report-expand-icon.open {
+  transform: rotate(-90deg);
+}
+
+/* ── Sub-habit list (expanded) ── */
+.report-sub-list {
+  padding: 2px 0 6px 24px;
+  animation: slideDown 0.2s ease;
+}
+
+.report-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.report-sub-name {
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  min-width: 55px;
+  white-space: nowrap;
+}
+
+.report-sub-bar {
+  height: 5px;
+}
+
+.report-sub-pct {
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  min-width: 24px;
+  text-align: left;
+}
+
+/* ── Best & Weakest habit cards ── */
+.report-best-card {
+  padding: 12px 14px;
+  border-right: 3px solid var(--color-primary);
+}
+
+.report-best-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.report-best-value {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.report-best-value strong {
+  color: var(--color-primary);
+}
+
+.report-weak-card {
+  padding: 12px 14px;
+  border-right: 3px solid var(--color-accent);
+}
+
+.report-weak-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+}
+
+.report-weak-value {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.report-weak-value strong {
+  color: var(--color-accent);
 }
 
 /* ================================================================

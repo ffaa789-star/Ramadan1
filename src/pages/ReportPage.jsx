@@ -12,9 +12,24 @@ const HABIT_KEYS = [
   { key: 'dhikr', name: 'الأذكار', icon: '📿' },
 ];
 
+const PRAYER_SUBS = [
+  { key: 'fajr', name: 'الفجر' },
+  { key: 'dhuhr', name: 'الظهر' },
+  { key: 'asr', name: 'العصر' },
+  { key: 'maghrib', name: 'المغرب' },
+  { key: 'isha', name: 'العشاء' },
+];
+
+const ADHKAR_SUBS = [
+  { key: 'morning', name: 'أذكار الصباح' },
+  { key: 'evening', name: 'أذكار المساء' },
+  { key: 'duaa', name: 'الدعاء' },
+];
+
 export default function ReportPage() {
   const { entries, loading } = useEntries();
   const [selectedDate, setSelectedDate] = useState(getTodayYMD);
+  const [expandedHabit, setExpandedHabit] = useState(null);
 
   const monthDays = useMemo(() => buildHijriMonthDays(selectedDate), [selectedDate]);
   const monthTitle = formatHijriMonthYear(monthDays[0]);
@@ -27,6 +42,20 @@ export default function ReportPage() {
       const count = daysWithData.filter((ymd) => entries[ymd]?.[h.key]).length;
       const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
       return { ...h, count, pct };
+    });
+
+    // Prayer sub-stats
+    const prayerSubStats = PRAYER_SUBS.map((p) => {
+      const count = daysWithData.filter((ymd) => entries[ymd]?.prayers?.[p.key]).length;
+      const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
+      return { ...p, count, pct };
+    });
+
+    // Adhkar sub-stats
+    const adhkarSubStats = ADHKAR_SUBS.map((a) => {
+      const count = daysWithData.filter((ymd) => entries[ymd]?.adhkarDetails?.[a.key]).length;
+      const pct = daysWithData.length > 0 ? Math.round((count / daysWithData.length) * 100) : 0;
+      return { ...a, count, pct };
     });
 
     let bestStreak = 0;
@@ -50,10 +79,16 @@ export default function ReportPage() {
       submittedDays: submittedDays.length,
       bestStreak,
       habitStats,
+      prayerSubStats,
+      adhkarSubStats,
       strongest,
       weakest,
     };
   }, [entries, monthDays]);
+
+  function toggleExpand(key) {
+    setExpandedHabit(expandedHabit === key ? null : key);
+  }
 
   function shareWhatsApp() {
     const text = `رفيق رمضان 🌙 — سجّل عباداتك اليومية بسهولة: ${window.location.origin}`;
@@ -72,6 +107,9 @@ export default function ReportPage() {
       </div>
     );
   }
+
+  // Determine which habits are expandable
+  const expandableKeys = ['prayer', 'dhikr'];
 
   return (
     <div className="report-page">
@@ -92,44 +130,96 @@ export default function ReportPage() {
         </div>
       </div>
 
+      {/* ── Habit breakdown with expandable sub-habits ── */}
       <div className="card report-habits-card">
         <h3 className="report-section-title">نسبة الالتزام بالعادات</h3>
-        {stats.habitStats.map((h) => (
-          <div key={h.key} className="report-habit-row">
-            <span className="report-habit-label">{h.icon} {h.name}</span>
-            <div className="report-habit-bar-track">
-              <div className="report-habit-bar-fill" style={{ width: `${h.pct}%` }} />
+        {stats.habitStats.map((h) => {
+          const isExpandable = expandableKeys.includes(h.key);
+          const isOpen = expandedHabit === h.key;
+
+          return (
+            <div key={h.key}>
+              <div
+                className={`report-habit-row${isExpandable ? ' report-habit-expandable' : ''}`}
+                onClick={() => isExpandable && toggleExpand(h.key)}
+              >
+                {isExpandable && (
+                  <span className={`report-expand-icon${isOpen ? ' open' : ''}`}>‹</span>
+                )}
+                <span className="report-habit-label">{h.icon} {h.name}</span>
+                <div className="report-habit-bar-track">
+                  <div className="report-habit-bar-fill" style={{ width: `${h.pct}%` }} />
+                </div>
+                <span className="report-habit-pct" dir="ltr">{toArabicNumeral(h.pct)}%</span>
+              </div>
+
+              {/* Sub-habits expansion */}
+              {h.key === 'prayer' && isOpen && (
+                <div className="report-sub-list">
+                  {stats.prayerSubStats.map((p) => (
+                    <div key={p.key} className="report-sub-row">
+                      <span className="report-sub-name">{p.name}</span>
+                      <div className="report-habit-bar-track report-sub-bar">
+                        <div className="report-habit-bar-fill" style={{ width: `${p.pct}%` }} />
+                      </div>
+                      <span className="report-sub-pct" dir="ltr">{toArabicNumeral(p.pct)}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {h.key === 'dhikr' && isOpen && (
+                <div className="report-sub-list">
+                  {stats.adhkarSubStats.map((a) => (
+                    <div key={a.key} className="report-sub-row">
+                      <span className="report-sub-name">{a.name}</span>
+                      <div className="report-habit-bar-track report-sub-bar">
+                        <div className="report-habit-bar-fill" style={{ width: `${a.pct}%` }} />
+                      </div>
+                      <span className="report-sub-pct" dir="ltr">{toArabicNumeral(a.pct)}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <span className="report-habit-pct">{toArabicNumeral(h.pct)}%</span>
+          );
+        })}
+      </div>
+
+      {/* ── Best habit ── */}
+      {stats.strongest && stats.strongest.pct > 0 && (
+        <div className="card report-best-card">
+          <div className="report-best-label">أفضل عادة لديك</div>
+          <div className="report-best-value">
+            {stats.strongest.icon} أقوى عادة: <strong>{stats.strongest.name}</strong> — استمر 👌
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className="card report-insights-card">
-        <h3 className="report-section-title">ملاحظات</h3>
-        {stats.strongest && stats.strongest.pct > 0 && (
-          <p className="report-insight">
-            {stats.strongest.icon} أقوى عادة: <strong>{stats.strongest.name}</strong> ({toArabicNumeral(stats.strongest.pct)}%)
-          </p>
-        )}
-        {stats.weakest && stats.daysTracked > 0 && stats.weakest.pct < 100 && (
-          <p className="report-insight">
-            {stats.weakest.icon} تحتاج تعزيز: <strong>{stats.weakest.name}</strong> ({toArabicNumeral(stats.weakest.pct)}%)
-          </p>
-        )}
-        {stats.daysTracked === 0 && (
+      {/* ── Weakest habit ── */}
+      {stats.weakest && stats.daysTracked > 0 && stats.weakest.pct < 100 && (
+        <div className="card report-weak-card">
+          <div className="report-weak-label">أقل عادة تحتاج اهتمام</div>
+          <div className="report-weak-value">
+            {stats.weakest.icon} تحتاج تركيز أكثر على: <strong>{stats.weakest.name}</strong>
+          </div>
+        </div>
+      )}
+
+      {stats.daysTracked === 0 && (
+        <div className="card report-insights-card">
           <p className="report-insight">لا توجد بيانات لهذا الشهر بعد.</p>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* ── Horizontal month tracker grid (only month visualization) ── */}
+      {/* ── Horizontal month tracker grid ── */}
       <HabitTrackerGrid
         entries={entries}
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
       />
 
-      {/* ── Share & About (merged from More page) ── */}
+      {/* ── Share & About ── */}
       <div className="card report-share-card">
         <h3 className="report-section-title">مشاركة</h3>
         <div className="report-share-btns">
